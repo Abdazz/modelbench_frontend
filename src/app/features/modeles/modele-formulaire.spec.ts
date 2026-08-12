@@ -90,15 +90,18 @@ describe('ModeleFormulaire', () => {
     httpMock.expectOne(`${environment.apiUrl}/modeles`).flush(
       {
         timestamp: '2026-08-12T10:00:00Z',
-        status: 409,
-        code: 'DUPLICATE_RESOURCE',
-        message: 'Le couple nom et version existe deja',
+        status: 400,
+        code: 'VALIDATION_ERROR',
+        message: 'La validation a echoue',
         path: '/api/modeles',
-        errors: null,
+        errors: [{ champ: 'nom', message: 'Le couple nom et version existe deja' }],
       },
-      { status: 409, statusText: 'Conflict' },
+      { status: 400, statusText: 'Bad Request' },
     );
 
+    expect(fixture.componentInstance['formulaire'].get('nom')?.errors).toEqual({
+      serveur: 'Le couple nom et version existe deja',
+    });
     expect(fixture.componentInstance['enCours']()).toBe(false);
   });
 });
