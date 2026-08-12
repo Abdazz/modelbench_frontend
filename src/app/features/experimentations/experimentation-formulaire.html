@@ -42,7 +42,7 @@
 
     <div class="flex flex-col gap-2">
       <label for="accuracy">Accuracy</label>
-      <p-inputnumber inputId="accuracy" formControlName="accuracy" [min]="0" [max]="1" [maxFractionDigits]="4" />
+      <p-inputnumber inputId="accuracy" formControlName="accuracy" [maxFractionDigits]="4" />
       @if (formulaire.get('accuracy')?.invalid && formulaire.get('accuracy')?.touched) {
         <small class="text-red-500">L accuracy doit etre comprise entre 0 et 1.</small>
       }
@@ -50,7 +50,7 @@
 
     <div class="flex flex-col gap-2">
       <label for="f1Score">F1 score</label>
-      <p-inputnumber inputId="f1Score" formControlName="f1Score" [min]="0" [max]="1" [maxFractionDigits]="4" />
+      <p-inputnumber inputId="f1Score" formControlName="f1Score" [maxFractionDigits]="4" />
       @if (formulaire.get('f1Score')?.invalid && formulaire.get('f1Score')?.touched) {
         <small class="text-red-500">Le F1 score doit etre compris entre 0 et 1.</small>
       }
