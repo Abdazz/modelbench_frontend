@@ -1,0 +1,114 @@
+<div class="flex flex-col gap-8 pb-6">
+  <header class="flex flex-col gap-1">
+    <p class="text-xs font-semibold uppercase tracking-widest text-indigo-500">Vue d'ensemble</p>
+    <h1 class="text-2xl font-bold text-[var(--p-text-color)]">Tableau de bord</h1>
+    <p class="text-sm text-[var(--p-text-muted-color)]">
+      Etat courant des datasets, modeles et experimentations enregistres dans ModelBench.
+    </p>
+  </header>
+
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <p-card>
+      <div class="flex items-center gap-4">
+        <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-indigo-500/10 text-indigo-500">
+          <i class="pi pi-database text-lg"></i>
+        </span>
+        <div class="flex flex-col">
+          <span class="text-xs font-semibold uppercase tracking-wide text-[var(--p-text-muted-color)]">Datasets</span>
+          <span class="text-4xl font-bold tabular-nums leading-tight">{{ synthese()?.nbDatasets ?? '-' }}</span>
+        </div>
+      </div>
+    </p-card>
+    <p-card>
+      <div class="flex items-center gap-4">
+        <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-indigo-500/10 text-indigo-500">
+          <i class="pi pi-share-alt text-lg"></i>
+        </span>
+        <div class="flex flex-col">
+          <span class="text-xs font-semibold uppercase tracking-wide text-[var(--p-text-muted-color)]">Modeles</span>
+          <span class="text-4xl font-bold tabular-nums leading-tight">{{ synthese()?.nbModeles ?? '-' }}</span>
+        </div>
+      </div>
+    </p-card>
+    <p-card>
+      <div class="flex items-center gap-4">
+        <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-indigo-500/10 text-indigo-500">
+          <i class="pi pi-chart-line text-lg"></i>
+        </span>
+        <div class="flex flex-col">
+          <span class="text-xs font-semibold uppercase tracking-wide text-[var(--p-text-muted-color)]">Experimentations</span>
+          <span class="text-4xl font-bold tabular-nums leading-tight">{{ synthese()?.nbExperimentations ?? '-' }}</span>
+        </div>
+      </div>
+    </p-card>
+  </div>
+
+  @if (synthese(); as s) {
+    <p-card class="border-l-4 border-l-indigo-500">
+      <ng-template #title>
+        <div class="flex items-center gap-2 text-base font-semibold">
+          <i class="pi pi-trophy text-indigo-500"></i>
+          <span>Meilleure experimentation</span>
+        </div>
+      </ng-template>
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <span class="text-sm text-[var(--p-text-muted-color)]">
+          Accuracy moyenne
+          <strong class="text-base tabular-nums text-[var(--p-text-color)]">{{ s.accuracyMoyenne | pourcentage }}</strong>
+        </span>
+        @if (s.meilleureExperimentation; as meilleure) {
+          <p-tag
+            [value]="meilleure.datasetNom + ' / ' + meilleure.modeleNom + ' : ' + (meilleure.accuracy | pourcentage)"
+            severity="success"
+          />
+        } @else {
+          <span class="text-sm text-[var(--p-text-muted-color)]">Aucune experimentation enregistree pour le moment.</span>
+        }
+      </div>
+    </p-card>
+  }
+
+  <p-card>
+    <ng-template #title>
+      <div class="flex items-center gap-2 text-base font-semibold">
+        <i class="pi pi-chart-bar text-indigo-500"></i>
+        <span>Comparaison des meilleurs modeles par dataset</span>
+      </div>
+    </ng-template>
+    <div class="mx-auto w-full max-w-3xl py-2">
+      <p-chart type="bar" [data]="donneesGraphique()" [options]="optionsGraphique" />
+    </div>
+  </p-card>
+
+  <p-card>
+    <ng-template #title>
+      <div class="flex items-center gap-2 text-base font-semibold">
+        <i class="pi pi-table text-indigo-500"></i>
+        <span>Meilleur modele par dataset</span>
+      </div>
+    </ng-template>
+    <p-table [value]="meilleursModeles()" [stripedRows]="true" size="small">
+      <ng-template #header>
+        <tr>
+          <th>Dataset</th>
+          <th>Modele</th>
+          <th class="text-right">Accuracy</th>
+          <th class="text-right">F1 score</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-ligne>
+        <tr>
+          <td class="font-medium">{{ ligne.datasetNom }}</td>
+          <td>{{ ligne.modeleNom }}</td>
+          <td class="text-right tabular-nums">{{ ligne.accuracy | pourcentage }}</td>
+          <td class="text-right tabular-nums">{{ ligne.f1Score | pourcentage }}</td>
+        </tr>
+      </ng-template>
+      <ng-template #emptymessage>
+        <tr>
+          <td colspan="4" class="text-center text-[var(--p-text-muted-color)]">Aucune experimentation enregistree.</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+</div>

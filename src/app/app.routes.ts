@@ -25,6 +25,11 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/experimentations/experimentation-liste').then((m) => m.ExperimentationListe),
       },
+      {
+        path: 'tableau-de-bord',
+        loadComponent: () =>
+          import('./features/tableau-de-bord/tableau-de-bord').then((m) => m.TableauDeBord),
+      },
     ],
   },
 ];
