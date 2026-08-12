@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { provideRouter } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
 import { MessageService, ConfirmationService } from 'primeng/api';
 
 import { App } from './app';
@@ -33,7 +33,7 @@ describe('App', () => {
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
-        provideRouter([]),
+        provideRouter([{ path: 'connexion', children: [] }]),
         MessageService,
         ConfirmationService,
       ],
@@ -71,5 +71,21 @@ describe('App', () => {
     expect(document.documentElement.classList.contains('app-dark')).toBe(true);
     fixture.componentInstance.basculerTheme();
     expect(document.documentElement.classList.contains('app-dark')).toBe(false);
+  });
+
+  it('deconnecter purge la session et redirige vers /connexion', () => {
+    localStorage.setItem(
+      'modelbench.session',
+      JSON.stringify({ token: 't', login: 'admin', nomComplet: 'Administrateur', roles: ['ADMIN'] }),
+    );
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const router = TestBed.inject(Router);
+    const navigation = vi.spyOn(router, 'navigateByUrl');
+
+    fixture.componentInstance.deconnecter();
+
+    expect(fixture.componentInstance['estConnecte']()).toBe(false);
+    expect(navigation).toHaveBeenCalledWith('/connexion');
   });
 });

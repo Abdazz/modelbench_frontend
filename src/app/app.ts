@@ -1,5 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
 import { MenubarModule } from 'primeng/menubar';
 import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
@@ -16,6 +16,7 @@ import { AuthService } from './core/services/auth.service';
 })
 export class App {
   private readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
 
   protected readonly estConnecte = this.auth.estConnecte;
   protected readonly utilisateur = this.auth.utilisateur;
@@ -35,6 +36,10 @@ export class App {
   }
 
   deconnecter(): void {
+    // Meme schema que authInterceptor (auth.interceptor.ts) sur un 401 : purge de la session puis
+    // navigation explicite vers /connexion, plutot que de laisser AuthService.deconnecter() gerer
+    // la navigation lui-meme (il reste ainsi focalise sur le seul etat de session).
     this.auth.deconnecter();
+    this.router.navigateByUrl('/connexion');
   }
 }
