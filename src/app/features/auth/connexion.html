@@ -1,0 +1,37 @@
+<div class="flex items-center justify-center min-h-screen bg-surface-50">
+  <p-card header="ModelBench" styleClass="w-full max-w-md">
+    <form [formGroup]="formulaire" (ngSubmit)="soumettre()" class="flex flex-col gap-4">
+      <div class="flex flex-col gap-2">
+        <label for="login" class="font-semibold">Identifiant</label>
+        <input pInputText id="login" formControlName="login" autocomplete="username" />
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="motDePasse" class="font-semibold">Mot de passe</label>
+        <input
+          pInputText
+          id="motDePasse"
+          type="password"
+          formControlName="motDePasse"
+          autocomplete="current-password"
+        />
+      </div>
+
+      @if (erreur(); as message) {
+        <p-message severity="error" [text]="message" />
+      }
+
+      <p-button
+        type="submit"
+        label="Se connecter"
+        [loading]="enCours()"
+        [disabled]="formulaire.invalid"
+      />
+    </form>
+
+    <p class="text-sm text-surface-500 mt-6">
+      Comptes de demonstration : <strong>admin</strong> / <strong>admin123</strong> (lecture et
+      ecriture) et <strong>chercheur</strong> / <strong>chercheur123</strong> (lecture seule).
+    </p>
+  </p-card>
+</div>

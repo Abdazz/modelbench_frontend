@@ -9,12 +9,13 @@ import Aura from '@primeuix/themes/aura';
 
 import { routes } from './app.routes';
 import { erreurInterceptor } from './core/interceptors/erreur.interceptor';
+import { authInterceptor } from './core/interceptors/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withComponentInputBinding()),
-    provideHttpClient(withFetch(), withInterceptors([erreurInterceptor])),
+    provideHttpClient(withFetch(), withInterceptors([erreurInterceptor, authInterceptor])),
     provideAnimationsAsync(),
     providePrimeNG({
       theme: {
