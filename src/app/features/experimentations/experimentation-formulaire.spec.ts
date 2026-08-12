@@ -102,6 +102,24 @@ describe('ExperimentationFormulaire', () => {
     expect(fixture.componentInstance['formulaire'].get('dateExecution')?.value).toBeInstanceOf(Date);
   });
 
+  it('changer le modele apres avoir choisi le dataset ne reinitialise pas le formulaire', () => {
+    // Meme bug et meme correctif que dataset-formulaire.ts (voir ce fichier pour la trace
+    // complete de la cause racine) : l effect() qui pre-remplit le formulaire doit envelopper
+    // formulaire.reset() dans untracked() pour ne pas capturer de dependances accidentelles sur
+    // des signaux internes a PrimeNG p-select lus pendant reset(). Confirme ici par reproduction
+    // manuelle identique (Dataset choisi puis Modele choisi effacait la selection du Dataset
+    // avant le correctif).
+    const fixture = creer();
+    const formulaire = fixture.componentInstance['formulaire'];
+    formulaire.get('datasetId')?.setValue(1);
+
+    formulaire.get('modeleId')?.setValue(1);
+    fixture.detectChanges();
+
+    expect(formulaire.get('datasetId')?.value).toBe(1);
+    expect(formulaire.get('modeleId')?.value).toBe(1);
+  });
+
   it('envoie dateExecution au format LocalDateTime sans fuseau a la soumission', () => {
     const fixture = creer();
     fixture.componentInstance['formulaire'].setValue({

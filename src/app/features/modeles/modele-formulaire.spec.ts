@@ -76,6 +76,26 @@ describe('ModeleFormulaire', () => {
     expect(fixture.componentInstance['formulaire'].get('version')?.value).toBe('1.0');
   });
 
+  it('changer le type apres avoir rempli les autres champs ne reinitialise pas le formulaire', () => {
+    // Meme bug et meme correctif que dataset-formulaire.ts (voir ce fichier pour la trace
+    // complete de la cause racine) : l effect() qui pre-remplit le formulaire doit envelopper
+    // formulaire.reset() dans untracked() pour ne pas capturer de dependances accidentelles sur
+    // des signaux internes a PrimeNG p-select lus pendant reset(). Confirme ici par reproduction
+    // manuelle identique (Nom/Algorithme remplis puis Type selectionne effacait tout le
+    // formulaire avant le correctif).
+    const fixture = creer();
+    const formulaire = fixture.componentInstance['formulaire'];
+    formulaire.get('nom')?.setValue('Mon modele');
+    formulaire.get('algorithme')?.setValue('Mon algorithme');
+
+    formulaire.get('type')?.setValue('VISION');
+    fixture.detectChanges();
+
+    expect(formulaire.get('nom')?.value).toBe('Mon modele');
+    expect(formulaire.get('algorithme')?.value).toBe('Mon algorithme');
+    expect(formulaire.get('type')?.value).toBe('VISION');
+  });
+
   it('reinjecte les erreurs de validation du serveur sur les champs concernes', () => {
     const fixture = creer();
     fixture.componentInstance['formulaire'].setValue({

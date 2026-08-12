@@ -74,6 +74,34 @@ describe('DatasetFormulaire', () => {
     expect(fixture.componentInstance['formulaire'].get('nom')?.value).toBe('MNIST');
   });
 
+  it('changer le format apres avoir rempli les autres champs ne reinitialise pas le formulaire', () => {
+    // Note de couverture : le bug reel (voir dataset-formulaire.ts) se declenchait via des
+    // signaux internes de PrimeNG p-select lus pendant formulaire.reset(), qui ne sont notifies
+    // que par une vraie interaction navigateur avec le panneau CDK Overlay (ouverture du select,
+    // clic sur une option). Une reproduction avec de vrais evenements DOM a ete tentee ici mais
+    // n a pas pu reproduire fidelement le mecanisme meme apres avoir contourne l absence de
+    // window.matchMedia dans jsdom : le panneau CDK Overlay ne notifie pas les memes signaux
+    // internes dans cet environnement que dans un vrai navigateur. La couverture fidele au
+    // mecanisme reel vit dans e2e/01-datasets-cycle-de-vie.spec.ts (Playwright, vrai Chromium),
+    // qui remplit le formulaire puis choisit une option Format via de vrais clics. Ce test-ci
+    // couvre neanmoins une regression valide et directement liee : que modifier le controle
+    // format (via le meme chemin ControlValueAccessor.writeValue() que la selection reelle)
+    // n efface pas les autres champs deja remplis.
+    const fixture = creer();
+    const formulaire = fixture.componentInstance['formulaire'];
+    formulaire.get('nom')?.setValue('Mon dataset');
+    formulaire.get('source')?.setValue('Ma source');
+    formulaire.get('nombreObservations')?.setValue(42);
+
+    formulaire.get('format')?.setValue('CSV');
+    fixture.detectChanges();
+
+    expect(formulaire.get('nom')?.value).toBe('Mon dataset');
+    expect(formulaire.get('source')?.value).toBe('Ma source');
+    expect(formulaire.get('nombreObservations')?.value).toBe(42);
+    expect(formulaire.get('format')?.value).toBe('CSV');
+  });
+
   it('reinjecte les erreurs de validation du serveur sur les champs concernes', () => {
     const fixture = creer();
     fixture.componentInstance['formulaire'].setValue({

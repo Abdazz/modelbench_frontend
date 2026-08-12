@@ -1,4 +1,4 @@
-import { Component, effect, inject, input, output, signal } from '@angular/core';
+import { Component, effect, inject, input, output, signal, untracked } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -68,25 +68,38 @@ export class ExperimentationFormulaire {
     effect(() => {
       if (this.visible()) {
         const donnees = this.donneesInitiales();
-        this.formulaire.reset(
-          donnees
-            ? {
-                datasetId: donnees.datasetId,
-                modeleId: donnees.modeleId,
-                accuracy: donnees.accuracy,
-                f1Score: donnees.f1Score,
-                dureeEntrainement: donnees.dureeEntrainement,
-                dateExecution: new Date(donnees.dateExecution),
-              }
-            : {
-                datasetId: null,
-                modeleId: null,
-                accuracy: null,
-                f1Score: null,
-                dureeEntrainement: null,
-                dateExecution: null,
-              },
-        );
+        // untracked() est necessaire ici : formulaire.reset() appelle de maniere synchrone
+        // writeValue() sur les ControlValueAccessor de p-select (Dataset, Modele) et de
+        // p-inputnumber/p-datepicker, qui lisent (et ecrivent) des signaux internes a PrimeNG.
+        // Sans untracked(), ces lectures sont capturees comme dependances de cet effect (Angular
+        // suit tout signal lu pendant l execution synchrone de l effect, quel que soit le
+        // composant proprietaire). Une fois capturees, la moindre interaction ulterieure avec un
+        // de ces champs (ouverture d un select, selection d une option) modifie ces memes signaux
+        // internes et redeclenche cet effect, qui rappelle reset() et efface le formulaire que
+        // l utilisateur vient de remplir. Meme cause et meme correctif que dans
+        // dataset-formulaire.ts, confirmes ici par reproduction manuelle identique (selectionner
+        // Dataset puis Modele effacait la selection du Dataset).
+        untracked(() => {
+          this.formulaire.reset(
+            donnees
+              ? {
+                  datasetId: donnees.datasetId,
+                  modeleId: donnees.modeleId,
+                  accuracy: donnees.accuracy,
+                  f1Score: donnees.f1Score,
+                  dureeEntrainement: donnees.dureeEntrainement,
+                  dateExecution: new Date(donnees.dateExecution),
+                }
+              : {
+                  datasetId: null,
+                  modeleId: null,
+                  accuracy: null,
+                  f1Score: null,
+                  dureeEntrainement: null,
+                  dateExecution: null,
+                },
+          );
+        });
       }
     });
   }

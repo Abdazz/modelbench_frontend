@@ -1,4 +1,4 @@
-import { Component, effect, inject, input, output, signal } from '@angular/core';
+import { Component, effect, inject, input, output, signal, untracked } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { DialogModule } from 'primeng/dialog';
@@ -52,17 +52,29 @@ export class DatasetFormulaire {
     effect(() => {
       if (this.visible()) {
         const donnees = this.donneesInitiales();
-        this.formulaire.reset(
-          donnees
-            ? {
-                nom: donnees.nom,
-                description: donnees.description ?? '',
-                source: donnees.source,
-                nombreObservations: donnees.nombreObservations,
-                format: donnees.format,
-              }
-            : { nom: '', description: '', source: '', nombreObservations: 0, format: null },
-        );
+        // untracked() est necessaire ici : formulaire.reset() appelle de maniere synchrone
+        // writeValue() sur les ControlValueAccessor de p-select/p-inputnumber, qui lisent (et
+        // ecrivent) des signaux internes a PrimeNG. Sans untracked(), ces lectures sont capturees
+        // comme dependances de cet effect (Angular suit tout signal lu pendant l execution
+        // synchrone de l effect, quel que soit le composant proprietaire). Une fois capturees, la
+        // moindre interaction ulterieure avec le select Format (ouverture, selection d une option)
+        // modifie ces memes signaux internes et redeclenche cet effect, qui rappelle reset() et
+        // efface le formulaire que l utilisateur vient de remplir. untracked() isole reset() de ce
+        // suivi de dependances sans changer quand l effect doit reellement se redeclencher (a
+        // savoir : quand visible() ou donneesInitiales() changent reellement).
+        untracked(() => {
+          this.formulaire.reset(
+            donnees
+              ? {
+                  nom: donnees.nom,
+                  description: donnees.description ?? '',
+                  source: donnees.source,
+                  nombreObservations: donnees.nombreObservations,
+                  format: donnees.format,
+                }
+              : { nom: '', description: '', source: '', nombreObservations: 0, format: null },
+          );
+        });
       }
     });
   }

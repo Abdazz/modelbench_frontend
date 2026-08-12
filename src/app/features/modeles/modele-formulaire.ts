@@ -1,4 +1,4 @@
-import { Component, effect, inject, input, output, signal } from '@angular/core';
+import { Component, effect, inject, input, output, signal, untracked } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { DialogModule } from 'primeng/dialog';
@@ -43,16 +43,27 @@ export class ModeleFormulaire {
     effect(() => {
       if (this.visible()) {
         const donnees = this.donneesInitiales();
-        this.formulaire.reset(
-          donnees
-            ? {
-                nom: donnees.nom,
-                type: donnees.type,
-                algorithme: donnees.algorithme,
-                version: donnees.version,
-              }
-            : { nom: '', type: null, algorithme: '', version: '' },
-        );
+        // untracked() est necessaire ici : formulaire.reset() appelle de maniere synchrone
+        // writeValue() sur le ControlValueAccessor de p-select (champ Type), qui lit (et ecrit)
+        // des signaux internes a PrimeNG. Sans untracked(), ces lectures sont capturees comme
+        // dependances de cet effect (Angular suit tout signal lu pendant l execution synchrone de
+        // l effect, quel que soit le composant proprietaire). Une fois capturees, la moindre
+        // interaction ulterieure avec le select Type (ouverture, selection d une option) modifie
+        // ces memes signaux internes et redeclenche cet effect, qui rappelle reset() et efface le
+        // formulaire que l utilisateur vient de remplir. Meme cause et meme correctif que dans
+        // dataset-formulaire.ts, confirmes ici par reproduction manuelle identique.
+        untracked(() => {
+          this.formulaire.reset(
+            donnees
+              ? {
+                  nom: donnees.nom,
+                  type: donnees.type,
+                  algorithme: donnees.algorithme,
+                  version: donnees.version,
+                }
+              : { nom: '', type: null, algorithme: '', version: '' },
+          );
+        });
       }
     });
   }
