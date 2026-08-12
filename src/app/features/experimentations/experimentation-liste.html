@@ -1,0 +1,126 @@
+<p-table
+  [value]="donnees()"
+  [lazy]="true"
+  (onLazyLoad)="charger($event)"
+  [totalRecords]="total()"
+  [loading]="chargement()"
+  [paginator]="true"
+  [rows]="10"
+  [rowsPerPageOptions]="[5, 10, 25, 50]"
+  dataKey="id"
+  [tableStyle]="{ 'min-width': '70rem' }"
+>
+  <ng-template #caption>
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <p-iconfield>
+        <p-inputicon class="pi pi-search" />
+        <input
+          pInputText
+          type="text"
+          placeholder="Rechercher..."
+          [attr.aria-label]="'Recherche globale'"
+          (input)="surRecherche($any($event.target).value)"
+        />
+      </p-iconfield>
+
+      <p-select
+        [options]="datasets()"
+        optionLabel="nom"
+        optionValue="id"
+        placeholder="Tous les datasets"
+        [showClear]="true"
+        (onChange)="surChangementDataset($event.value)"
+      />
+      <p-select
+        [options]="modeles()"
+        optionLabel="nom"
+        optionValue="id"
+        placeholder="Tous les modeles"
+        [showClear]="true"
+        (onChange)="surChangementModele($event.value)"
+      />
+      <p-inputnumber
+        placeholder="Accuracy min"
+        [min]="0"
+        [max]="1"
+        [maxFractionDigits]="2"
+        (onInput)="surAccuracyMin($event.value)"
+      />
+      <p-inputnumber
+        placeholder="Accuracy max"
+        [min]="0"
+        [max]="1"
+        [maxFractionDigits]="2"
+        (onInput)="surAccuracyMax($event.value)"
+      />
+
+      @if (estAdmin()) {
+        <p-button label="Nouvelle experimentation" icon="pi pi-plus" (onClick)="ouvrirCreation()" />
+      }
+    </div>
+  </ng-template>
+
+  <ng-template #header>
+    <tr>
+      <th>Dataset</th>
+      <th>Modele</th>
+      <th pSortableColumn="accuracy">Accuracy <p-sortIcon field="accuracy" /></th>
+      <th pSortableColumn="f1Score">F1 score <p-sortIcon field="f1Score" /></th>
+      <th>Duree d entrainement</th>
+      <th pSortableColumn="dateExecution">Date d execution <p-sortIcon field="dateExecution" /></th>
+      @if (estAdmin()) {
+        <th>Actions</th>
+      }
+    </tr>
+  </ng-template>
+
+  <ng-template #body let-experimentation>
+    <tr>
+      <td>{{ experimentation.datasetNom }}</td>
+      <td>{{ experimentation.modeleNom }}</td>
+      <td>{{ experimentation.accuracy | pourcentage }}</td>
+      <td>{{ experimentation.f1Score | pourcentage }}</td>
+      <td>{{ experimentation.dureeEntrainement | duree }}</td>
+      <td>{{ experimentation.dateExecution }}</td>
+      @if (estAdmin()) {
+        <td class="flex gap-2">
+          <p-button
+            icon="pi pi-pencil"
+            [text]="true"
+            [attr.aria-label]="'Modifier'"
+            (onClick)="ouvrirEdition(experimentation)"
+          />
+          <p-button
+            icon="pi pi-trash"
+            [text]="true"
+            severity="danger"
+            [attr.aria-label]="'Supprimer'"
+            (onClick)="confirmerSuppression(experimentation)"
+          />
+        </td>
+      }
+    </tr>
+  </ng-template>
+
+  <ng-template #emptymessage>
+    <tr>
+      <td [attr.colspan]="estAdmin() ? 7 : 6">Aucune experimentation trouvee.</td>
+    </tr>
+  </ng-template>
+
+  <ng-template #loadingbody>
+    <tr>
+      <td [attr.colspan]="estAdmin() ? 7 : 6"><p-skeleton height="2rem" /></td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<app-experimentation-formulaire
+  [visible]="dialogueVisible()"
+  [mode]="modeDialogue()"
+  [donneesInitiales]="experimentationEnEdition()"
+  [datasets]="datasets()"
+  [modeles]="modeles()"
+  (visibleChange)="dialogueVisible.set($event)"
+  (sauvegarde)="surSauvegarde()"
+/>
