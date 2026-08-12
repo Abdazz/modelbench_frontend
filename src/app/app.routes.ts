@@ -16,6 +16,10 @@ export const routes: Routes = [
         path: 'datasets',
         loadComponent: () => import('./features/datasets/dataset-liste').then((m) => m.DatasetListe),
       },
+      {
+        path: 'modeles',
+        loadComponent: () => import('./features/modeles/modele-liste').then((m) => m.ModeleListe),
+      },
     ],
   },
 ];
