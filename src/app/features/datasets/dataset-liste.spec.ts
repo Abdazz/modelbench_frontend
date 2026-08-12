@@ -206,21 +206,37 @@ describe('DatasetListe', () => {
     expect(fixture.componentInstance['estAdmin']()).toBe(false);
   });
 
-  it('estAdmin est vrai quand la session stockee porte le role ADMIN', () => {
+  it('estAdmin est vrai quand la session stockee porte le role ADMIN', async () => {
     localStorage.setItem(
       CLE_SESSION,
       JSON.stringify({ token: 't', login: 'admin', nomComplet: 'Administrateur', roles: ['ADMIN'] }),
     );
     const fixture = creer();
     expect(fixture.componentInstance['estAdmin']()).toBe(true);
+
+    // AuthService differe sa revalidation de session via queueMicrotask (voir auth.service.ts) :
+    // on laisse ce microtache s executer puis on solde la requete avant httpMock.verify().
+    await Promise.resolve();
+    httpMock.expectOne((r) => r.url === `${environment.apiUrl}/auth/moi`).flush({
+      login: 'admin',
+      nomComplet: 'Administrateur',
+      roles: ['ADMIN'],
+    });
   });
 
-  it('estAdmin est faux quand la session stockee ne porte que le role CHERCHEUR', () => {
+  it('estAdmin est faux quand la session stockee ne porte que le role CHERCHEUR', async () => {
     localStorage.setItem(
       CLE_SESSION,
       JSON.stringify({ token: 't', login: 'chercheur', nomComplet: 'Chercheur', roles: ['CHERCHEUR'] }),
     );
     const fixture = creer();
     expect(fixture.componentInstance['estAdmin']()).toBe(false);
+
+    await Promise.resolve();
+    httpMock.expectOne((r) => r.url === `${environment.apiUrl}/auth/moi`).flush({
+      login: 'chercheur',
+      nomComplet: 'Chercheur',
+      roles: ['CHERCHEUR'],
+    });
   });
 });

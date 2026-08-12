@@ -1,8 +1,10 @@
 import { TestBed } from '@angular/core/testing';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
+import { provideRouter } from '@angular/router';
 
 import { AuthService } from './auth.service';
+import { authInterceptor } from '../interceptors/auth.interceptor';
 import { environment } from '../environments/environment';
 
 describe('AuthService', () => {
@@ -87,7 +89,7 @@ describe('AuthService', () => {
     expect(localStorage.getItem('modelbench.session')).toBeNull();
   });
 
-  it('restaure une session stockee et la revalide via GET /auth/moi', () => {
+  it('restaure une session stockee et la revalide via GET /auth/moi', async () => {
     localStorage.setItem(
       'modelbench.session',
       JSON.stringify({ token: 'ancien', login: 'admin', nomComplet: 'Administrateur', roles: ['ADMIN'] }),
@@ -96,23 +98,63 @@ describe('AuthService', () => {
     const service = creerService();
     expect(service.estConnecte()).toBe(true);
 
+    // La revalidation est differee via queueMicrotask (voir auth.service.ts) pour eviter la
+    // dependance circulaire NG0200 avec authInterceptor : on laisse ce microtache s executer
+    // avant de chercher la requete HTTP correspondante.
+    await Promise.resolve();
+
     const requete = httpMock.expectOne(`${environment.apiUrl}/auth/moi`);
     requete.flush({ login: 'admin', nomComplet: 'Administrateur', roles: ['ADMIN'] });
 
     expect(service.estConnecte()).toBe(true);
   });
 
-  it('purge la session stockee si GET /auth/moi echoue', () => {
+  it('purge la session stockee si GET /auth/moi echoue', async () => {
     localStorage.setItem(
       'modelbench.session',
       JSON.stringify({ token: 'expire', login: 'admin', nomComplet: 'Administrateur', roles: ['ADMIN'] }),
     );
 
     const service = creerService();
+
+    // Meme raison que ci-dessus : la revalidation est differee via queueMicrotask.
+    await Promise.resolve();
+
     const requete = httpMock.expectOne(`${environment.apiUrl}/auth/moi`);
     requete.flush({ code: 'AUTHENTICATION_REQUIRED' }, { status: 401, statusText: 'Unauthorized' });
 
     expect(service.estConnecte()).toBe(false);
     expect(localStorage.getItem('modelbench.session')).toBeNull();
+  });
+
+  it('ne se deconnecte pas silencieusement quand la chaine d intercepteurs reelle est active', async () => {
+    localStorage.setItem(
+      'modelbench.session',
+      JSON.stringify({ token: 'valide', login: 'admin', nomComplet: 'Administrateur', roles: ['ADMIN'] }),
+    );
+
+    // Reproduit le bug NG0200 : contrairement a creerService(), on active ici la vraie chaine
+    // d intercepteurs (authInterceptor fait inject(AuthService)). Si restaurerSession() est
+    // encore appelee de maniere synchrone depuis le constructeur, l injection reentrante leve
+    // NG0200, RxJS l avale via le gestionnaire error, et deconnecter() purge la session avant
+    // meme que ce test ne puisse observer quoi que ce soit d autre que estConnecte() == false.
+    TestBed.configureTestingModule({
+      providers: [
+        provideHttpClient(withInterceptors([authInterceptor])),
+        provideHttpClientTesting(),
+        provideRouter([{ path: 'connexion', children: [] }]),
+      ],
+    });
+    const service = TestBed.inject(AuthService);
+    httpMock = TestBed.inject(HttpTestingController);
+
+    expect(service.estConnecte()).toBe(true);
+
+    await Promise.resolve();
+
+    const requete = httpMock.expectOne(`${environment.apiUrl}/auth/moi`);
+    requete.flush({ login: 'admin', nomComplet: 'Administrateur', roles: ['ADMIN'] });
+
+    expect(service.estConnecte()).toBe(true);
   });
 });

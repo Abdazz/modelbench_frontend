@@ -32,8 +32,17 @@ export class AuthService {
   readonly estAdmin = computed(() => this.session()?.roles.includes('ADMIN') ?? false);
 
   constructor() {
+    // La revalidation est differee hors de la fenetre synchrone du constructeur : appelee ici
+    // directement, elle passe par authInterceptor, qui fait inject(AuthService) alors
+    // qu AuthService est encore en cours de construction. Angular detecte ce cycle reentrant et
+    // leve NG0200 de maniere synchrone ; comme subscribe() ne fournit qu un gestionnaire error,
+    // RxJS l avale silencieusement et deconnecter() purge la session avant meme la fin du
+    // constructeur. queueMicrotask repousse l appel apres que l injection d AuthService soit
+    // terminee, ce qui casse le cycle sans changer le comportement fonctionnel.
     if (this.session()) {
-      this.restaurerSession().subscribe({ error: () => this.deconnecter() });
+      queueMicrotask(() => {
+        this.restaurerSession().subscribe({ error: () => this.deconnecter() });
+      });
     }
   }
 
