@@ -10,6 +10,12 @@ export const routes: Routes = [
   {
     path: '',
     canActivateChild: [authGuard],
-    children: [{ path: '', pathMatch: 'full', redirectTo: 'tableau-de-bord' }],
+    children: [
+      { path: '', pathMatch: 'full', redirectTo: 'tableau-de-bord' },
+      {
+        path: 'datasets',
+        loadComponent: () => import('./features/datasets/dataset-liste').then((m) => m.DatasetListe),
+      },
+    ],
   },
 ];
