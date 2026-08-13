@@ -5,9 +5,9 @@
   [style]="{ width: '32rem' }"
   [header]="mode() === 'creation' ? 'Nouvelle experimentation' : 'Modifier l experimentation'"
 >
-  <form [formGroup]="formulaire" (ngSubmit)="soumettre()" class="flex flex-col gap-4">
+  <form [formGroup]="formulaire" (ngSubmit)="soumettre()" class="flex flex-col gap-5 pt-1">
     <div class="flex flex-col gap-2">
-      <label for="datasetId">Dataset</label>
+      <label for="datasetId" class="mb-eyebrow text-[0.68rem] text-[var(--p-text-muted-color)]">Dataset</label>
       <p-select
         inputId="datasetId"
         formControlName="datasetId"
@@ -24,7 +24,7 @@
     </div>
 
     <div class="flex flex-col gap-2">
-      <label for="modeleId">Modele</label>
+      <label for="modeleId" class="mb-eyebrow text-[0.68rem] text-[var(--p-text-muted-color)]">Modele</label>
       <p-select
         inputId="modeleId"
         formControlName="modeleId"
@@ -41,7 +41,7 @@
     </div>
 
     <div class="flex flex-col gap-2">
-      <label for="accuracy">Accuracy</label>
+      <label for="accuracy" class="mb-eyebrow text-[0.68rem] text-[var(--p-text-muted-color)]">Accuracy</label>
       <p-inputnumber inputId="accuracy" formControlName="accuracy" [maxFractionDigits]="4" />
       @if (formulaire.get('accuracy')?.invalid && formulaire.get('accuracy')?.touched) {
         <small class="text-red-500">L accuracy doit etre comprise entre 0 et 1.</small>
@@ -49,7 +49,7 @@
     </div>
 
     <div class="flex flex-col gap-2">
-      <label for="f1Score">F1 score</label>
+      <label for="f1Score" class="mb-eyebrow text-[0.68rem] text-[var(--p-text-muted-color)]">F1 score</label>
       <p-inputnumber inputId="f1Score" formControlName="f1Score" [maxFractionDigits]="4" />
       @if (formulaire.get('f1Score')?.invalid && formulaire.get('f1Score')?.touched) {
         <small class="text-red-500">Le F1 score doit etre compris entre 0 et 1.</small>
@@ -57,7 +57,7 @@
     </div>
 
     <div class="flex flex-col gap-2">
-      <label for="dureeEntrainement">Duree d entrainement (secondes)</label>
+      <label for="dureeEntrainement" class="mb-eyebrow text-[0.68rem] text-[var(--p-text-muted-color)]">Duree d entrainement (secondes)</label>
       <p-inputnumber inputId="dureeEntrainement" formControlName="dureeEntrainement" [min]="1" />
       @if (formulaire.get('dureeEntrainement')?.invalid && formulaire.get('dureeEntrainement')?.touched) {
         <small class="text-red-500">La duree doit etre strictement positive.</small>
@@ -65,7 +65,7 @@
     </div>
 
     <div class="flex flex-col gap-2">
-      <label for="dateExecution">Date d execution</label>
+      <label for="dateExecution" class="mb-eyebrow text-[0.68rem] text-[var(--p-text-muted-color)]">Date d execution</label>
       <p-datepicker
         inputId="dateExecution"
         formControlName="dateExecution"
@@ -78,8 +78,8 @@
       }
     </div>
 
-    <div class="flex justify-end gap-2">
-      <p-button type="button" label="Annuler" severity="secondary" (onClick)="fermer()" />
+    <div class="flex justify-end gap-2 pt-1">
+      <p-button type="button" label="Annuler" severity="secondary" [outlined]="true" (onClick)="fermer()" />
       <p-button type="submit" label="Enregistrer" [loading]="enCours()" [disabled]="formulaire.invalid" />
     </div>
   </form>

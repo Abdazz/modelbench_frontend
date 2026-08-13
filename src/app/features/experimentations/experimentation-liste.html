@@ -1,120 +1,140 @@
-<p-table
-  [value]="donnees()"
-  [lazy]="true"
-  (onLazyLoad)="charger($event)"
-  [totalRecords]="total()"
-  [loading]="chargement()"
-  [paginator]="true"
-  [(first)]="premier"
-  [rows]="10"
-  [rowsPerPageOptions]="[5, 10, 25, 50]"
-  dataKey="id"
-  [tableStyle]="{ 'min-width': '70rem' }"
->
-  <ng-template #caption>
-    <div class="flex flex-wrap items-center justify-between gap-3">
-      <p-iconfield>
-        <p-inputicon class="pi pi-search" />
-        <input
-          pInputText
-          type="text"
-          placeholder="Rechercher..."
-          [attr.aria-label]="'Recherche globale'"
-          (input)="surRecherche($any($event.target).value)"
-        />
-      </p-iconfield>
+<div class="flex flex-col gap-8 pb-6">
+  <header class="flex flex-col gap-1.5">
+    <p class="mb-eyebrow text-[0.7rem] text-[var(--p-primary-color)]">Registre</p>
+    <h1 class="text-[1.75rem] font-bold tracking-tight text-[var(--p-text-color)]">Experimentations</h1>
+    <p class="text-sm text-[var(--p-text-muted-color)]">
+      Resultats de benchmark obtenus en croisant un dataset et un modele.
+    </p>
+  </header>
 
-      <p-select
-        [options]="datasets()"
-        optionLabel="nom"
-        optionValue="id"
-        placeholder="Tous les datasets"
-        [showClear]="true"
-        (onChange)="surChangementDataset($event.value)"
-      />
-      <p-select
-        [options]="modeles()"
-        optionLabel="nom"
-        optionValue="id"
-        placeholder="Tous les modeles"
-        [showClear]="true"
-        (onChange)="surChangementModele($event.value)"
-      />
-      <p-inputnumber
-        placeholder="Accuracy min"
-        [min]="0"
-        [max]="1"
-        [maxFractionDigits]="2"
-        (onInput)="surAccuracyMin($event.value)"
-      />
-      <p-inputnumber
-        placeholder="Accuracy max"
-        [min]="0"
-        [max]="1"
-        [maxFractionDigits]="2"
-        (onInput)="surAccuracyMax($event.value)"
-      />
+  <div class="rounded-xl border border-[var(--p-content-border-color)] bg-[var(--p-content-background)] p-2 sm:p-3">
+    <p-table
+      [value]="donnees()"
+      [lazy]="true"
+      (onLazyLoad)="charger($event)"
+      [totalRecords]="total()"
+      [loading]="chargement()"
+      [paginator]="true"
+      [(first)]="premier"
+      [rows]="10"
+      [rowsPerPageOptions]="[5, 10, 25, 50]"
+      dataKey="id"
+      [tableStyle]="{ 'min-width': '70rem' }"
+    >
+      <ng-template #caption>
+        <div class="flex flex-wrap items-center justify-between gap-3 py-1">
+          <div class="flex flex-wrap items-center gap-3">
+            <p-iconfield>
+              <p-inputicon class="pi pi-search" />
+              <input
+                pInputText
+                type="text"
+                placeholder="Rechercher..."
+                [attr.aria-label]="'Recherche globale'"
+                (input)="surRecherche($any($event.target).value)"
+              />
+            </p-iconfield>
 
-      @if (estAdmin()) {
-        <p-button label="Nouvelle experimentation" icon="pi pi-plus" (onClick)="ouvrirCreation()" />
-      }
-    </div>
-  </ng-template>
+            <p-select
+              [options]="datasets()"
+              optionLabel="nom"
+              optionValue="id"
+              placeholder="Tous les datasets"
+              [showClear]="true"
+              (onChange)="surChangementDataset($event.value)"
+            />
+            <p-select
+              [options]="modeles()"
+              optionLabel="nom"
+              optionValue="id"
+              placeholder="Tous les modeles"
+              [showClear]="true"
+              (onChange)="surChangementModele($event.value)"
+            />
+            <div class="flex items-center gap-1.5">
+              <p-inputnumber
+                placeholder="Accuracy min"
+                [min]="0"
+                [max]="1"
+                [maxFractionDigits]="2"
+                styleClass="w-32"
+                (onInput)="surAccuracyMin($event.value)"
+              />
+              <span class="mb-eyebrow text-[0.65rem] text-[var(--p-text-muted-color)]">a</span>
+              <p-inputnumber
+                placeholder="Accuracy max"
+                [min]="0"
+                [max]="1"
+                [maxFractionDigits]="2"
+                styleClass="w-32"
+                (onInput)="surAccuracyMax($event.value)"
+              />
+            </div>
+          </div>
 
-  <ng-template #header>
-    <tr>
-      <th>Dataset</th>
-      <th>Modele</th>
-      <th pSortableColumn="accuracy">Accuracy <p-sortIcon field="accuracy" /></th>
-      <th pSortableColumn="f1Score">F1 score <p-sortIcon field="f1Score" /></th>
-      <th>Duree d entrainement</th>
-      <th pSortableColumn="dateExecution">Date d execution <p-sortIcon field="dateExecution" /></th>
-      @if (estAdmin()) {
-        <th>Actions</th>
-      }
-    </tr>
-  </ng-template>
+          @if (estAdmin()) {
+            <p-button label="Nouvelle experimentation" icon="pi pi-plus" (onClick)="ouvrirCreation()" />
+          }
+        </div>
+      </ng-template>
 
-  <ng-template #body let-experimentation>
-    <tr>
-      <td>{{ experimentation.datasetNom }}</td>
-      <td>{{ experimentation.modeleNom }}</td>
-      <td>{{ experimentation.accuracy | pourcentage }}</td>
-      <td>{{ experimentation.f1Score | pourcentage }}</td>
-      <td>{{ experimentation.dureeEntrainement | duree }}</td>
-      <td>{{ experimentation.dateExecution }}</td>
-      @if (estAdmin()) {
-        <td class="flex gap-2">
-          <p-button
-            icon="pi pi-pencil"
-            [text]="true"
-            [ariaLabel]="'Modifier'"
-            (onClick)="ouvrirEdition(experimentation)"
-          />
-          <p-button
-            icon="pi pi-trash"
-            [text]="true"
-            severity="danger"
-            [ariaLabel]="'Supprimer'"
-            (onClick)="confirmerSuppression(experimentation)"
-          />
-        </td>
-      }
-    </tr>
-  </ng-template>
+      <ng-template #header>
+        <tr>
+          <th><span class="mb-eyebrow text-[0.68rem]">Dataset</span></th>
+          <th><span class="mb-eyebrow text-[0.68rem]">Modele</span></th>
+          <th pSortableColumn="accuracy" class="text-right"><span class="mb-eyebrow text-[0.68rem]">Accuracy</span> <p-sortIcon field="accuracy" /></th>
+          <th pSortableColumn="f1Score" class="text-right"><span class="mb-eyebrow text-[0.68rem]">F1 score</span> <p-sortIcon field="f1Score" /></th>
+          <th class="text-right"><span class="mb-eyebrow text-[0.68rem]">Duree d entrainement</span></th>
+          <th pSortableColumn="dateExecution"><span class="mb-eyebrow text-[0.68rem]">Date d execution</span> <p-sortIcon field="dateExecution" /></th>
+          @if (estAdmin()) {
+            <th><span class="mb-eyebrow text-[0.68rem]">Actions</span></th>
+          }
+        </tr>
+      </ng-template>
 
-  <ng-template #emptymessage>
-    <tr>
-      <td [attr.colspan]="estAdmin() ? 7 : 6">Aucune experimentation trouvee.</td>
-    </tr>
-  </ng-template>
+      <ng-template #body let-experimentation>
+        <tr>
+          <td class="font-medium">{{ experimentation.datasetNom }}</td>
+          <td>{{ experimentation.modeleNom }}</td>
+          <td class="text-right font-mono tabular-nums">{{ experimentation.accuracy | pourcentage }}</td>
+          <td class="text-right font-mono tabular-nums">{{ experimentation.f1Score | pourcentage }}</td>
+          <td class="text-right font-mono tabular-nums">{{ experimentation.dureeEntrainement | duree }}</td>
+          <td class="font-mono text-[var(--p-text-muted-color)]">{{ experimentation.dateExecution }}</td>
+          @if (estAdmin()) {
+            <td class="flex gap-1">
+              <p-button
+                icon="pi pi-pencil"
+                [text]="true"
+                severity="secondary"
+                [ariaLabel]="'Modifier'"
+                (onClick)="ouvrirEdition(experimentation)"
+              />
+              <p-button
+                icon="pi pi-trash"
+                [text]="true"
+                severity="danger"
+                [ariaLabel]="'Supprimer'"
+                (onClick)="confirmerSuppression(experimentation)"
+              />
+            </td>
+          }
+        </tr>
+      </ng-template>
 
-  <ng-template #loadingbody>
-    <tr>
-      <td [attr.colspan]="estAdmin() ? 7 : 6"><p-skeleton height="2rem" /></td>
-    </tr>
-  </ng-template>
-</p-table>
+      <ng-template #emptymessage>
+        <tr>
+          <td [attr.colspan]="estAdmin() ? 7 : 6" class="text-center text-[var(--p-text-muted-color)]">Aucune experimentation trouvee.</td>
+        </tr>
+      </ng-template>
+
+      <ng-template #loadingbody>
+        <tr>
+          <td [attr.colspan]="estAdmin() ? 7 : 6"><p-skeleton height="2rem" /></td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
 
 <app-experimentation-formulaire
   [visible]="dialogueVisible()"
