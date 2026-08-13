@@ -5,11 +5,11 @@ import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { providePrimeNG } from 'primeng/config';
 import { MessageService } from 'primeng/api';
 import { ConfirmationService } from 'primeng/api';
-import Aura from '@primeuix/themes/aura';
 
 import { routes } from './app.routes';
 import { erreurInterceptor } from './core/interceptors/erreur.interceptor';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
+import { ModelBenchPreset } from './core/theme/modelbench-preset';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -19,7 +19,7 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
     providePrimeNG({
       theme: {
-        preset: Aura,
+        preset: ModelBenchPreset,
         options: { darkModeSelector: '.app-dark' },
       },
     }),

@@ -4,8 +4,137 @@
 @import 'tailwindcss-primeui';
 @import 'primeicons/primeicons.css';
 
+@font-face {
+  font-family: 'IBM Plex Sans';
+  src: url('/fonts/ibm-plex-sans-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'IBM Plex Sans';
+  src: url('/fonts/ibm-plex-sans-500.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'IBM Plex Sans';
+  src: url('/fonts/ibm-plex-sans-600.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'IBM Plex Sans';
+  src: url('/fonts/ibm-plex-sans-700.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  src: url('/fonts/ibm-plex-mono-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  src: url('/fonts/ibm-plex-mono-500.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  src: url('/fonts/ibm-plex-mono-600.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  --font-sans:
+    'IBM Plex Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono:
+    'IBM Plex Mono', ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace;
+}
+
+/*
+ * --p-surface-* sont des tokens primitifs PrimeNG : une seule echelle statique, elle ne
+ * bascule pas automatiquement avec .app-dark (contrairement aux tokens semantiques comme
+ * --p-content-background). On expose donc nos propres tokens de page qui, eux, basculent.
+ */
+:root {
+  --mb-page-bg: var(--p-surface-50);
+  --mb-amber-400: #e3a455;
+  --mb-amber-500: #c77d22;
+  --mb-amber-600: #9c6119;
+  --mb-grid-dot: color-mix(in srgb, var(--p-surface-400) 45%, transparent);
+}
+
+:root.app-dark {
+  --mb-page-bg: var(--p-surface-950);
+  --mb-amber-400: #eab873;
+  --mb-amber-500: #dd9a45;
+  --mb-amber-600: #c77d22;
+  --mb-grid-dot: color-mix(in srgb, var(--p-surface-600) 55%, transparent);
+}
+
 html,
 body {
   height: 100%;
   margin: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--mb-page-bg);
+  color: var(--p-text-color);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--p-primary-200);
+  color: var(--p-primary-950);
+}
+
+:focus-visible {
+  outline: 2px solid var(--p-primary-color);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Grille de fond en pointilles, evoque le papier millimetre d un carnet de laboratoire. */
+.mb-grid-bg {
+  background-image: radial-gradient(var(--mb-grid-dot) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.mb-eyebrow {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-weight: 600;
+}
+
+@keyframes mb-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+.mb-status-dot {
+  animation: mb-pulse 2.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mb-status-dot {
+    animation: none;
+  }
 }
