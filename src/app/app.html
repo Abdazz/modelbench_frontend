@@ -6,7 +6,7 @@
           [icon]="sombre() ? 'pi pi-sun' : 'pi pi-moon'"
           [text]="true"
           (onClick)="basculerTheme()"
-          [attr.aria-label]="'Basculer le theme'"
+          [ariaLabel]="'Basculer le theme'"
         />
         @if (utilisateur(); as u) {
           <span class="text-sm">{{ u.nomComplet }} ({{ u.roles.join(', ') }})</span>
@@ -21,7 +21,7 @@
     [text]="true"
     (onClick)="basculerTheme()"
     styleClass="fixed top-4 right-4"
-    [attr.aria-label]="'Basculer le theme'"
+    [ariaLabel]="'Basculer le theme'"
   />
 }
 
