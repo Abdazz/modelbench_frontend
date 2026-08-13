@@ -3,16 +3,17 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ButtonModule } from 'primeng/button';
-import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { MessageModule } from 'primeng/message';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
 
 import { AuthService } from '../../core/services/auth.service';
 import { ApiError } from '../../core/models/api-error.model';
 
 @Component({
   selector: 'app-connexion',
-  imports: [ReactiveFormsModule, ButtonModule, CardModule, InputTextModule, MessageModule],
+  imports: [ReactiveFormsModule, ButtonModule, InputTextModule, MessageModule, IconFieldModule, InputIconModule],
   templateUrl: './connexion.html',
 })
 export class Connexion {
