@@ -51,8 +51,8 @@ pipes. Aucune dependance sur un backend demarre.
 npm run e2e
 ```
 
-Playwright demarre automatiquement le backend (profil `h2`) et `ng serve`, execute les sept
-scenarios de bout en bout et produit huit captures d'ecran dans `../docs/captures/`. Commande
+Playwright demarre automatiquement le backend (profil `h2`) et `ng serve`, execute les dix
+scenarios de bout en bout et produit neuf captures d'ecran dans `../docs/captures/`. Commande
 distincte de `npm test` : un evaluateur presse n'est jamais bloque par l'installation d'un
 navigateur.
 
