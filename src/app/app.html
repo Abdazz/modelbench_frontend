@@ -1,26 +1,48 @@
 @if (estConnecte()) {
-  <p-menubar [model]="elementsMenu()">
-    <ng-template #end>
-      <div class="flex items-center gap-3">
-        <p-button
-          [icon]="sombre() ? 'pi pi-sun' : 'pi pi-moon'"
-          [text]="true"
-          (onClick)="basculerTheme()"
-          [ariaLabel]="'Basculer le theme'"
-        />
-        @if (utilisateur(); as u) {
-          <span class="text-sm">{{ u.nomComplet }} ({{ u.roles.join(', ') }})</span>
-        }
-        <p-button label="Deconnexion" icon="pi pi-sign-out" severity="secondary" (onClick)="deconnecter()" />
-      </div>
-    </ng-template>
-  </p-menubar>
+  <div class="sticky top-0 z-40 border-b border-[var(--p-content-border-color)] bg-[var(--p-content-background)]/95 backdrop-blur">
+    <div class="mx-auto max-w-7xl">
+      <p-menubar
+        [model]="elementsMenu()"
+        styleClass="!border-0 !bg-transparent !rounded-none !px-2"
+        [dt]="{ root: { padding: '0.625rem 0.25rem', gap: '0.125rem' } }"
+      >
+        <ng-template #start>
+          <a routerLink="/tableau-de-bord" class="flex items-center gap-2.5 pr-4 mr-2 border-r border-[var(--p-content-border-color)]">
+            <span class="relative flex h-2.5 w-2.5">
+              <span class="mb-status-dot absolute inline-flex h-full w-full rounded-full bg-[var(--p-primary-color)] opacity-75"></span>
+              <span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-[var(--p-primary-color)]"></span>
+            </span>
+            <span class="font-sans text-[1.05rem] font-bold tracking-tight text-[var(--p-text-color)]">ModelBench</span>
+            <span class="mb-eyebrow hidden sm:inline text-[0.65rem] text-[var(--p-text-muted-color)]">Lab</span>
+          </a>
+        </ng-template>
+        <ng-template #end>
+          <div class="flex items-center gap-1.5 pl-2">
+            <p-button
+              [icon]="sombre() ? 'pi pi-sun' : 'pi pi-moon'"
+              [text]="true"
+              severity="secondary"
+              (onClick)="basculerTheme()"
+              [ariaLabel]="'Basculer le theme'"
+            />
+            @if (utilisateur(); as u) {
+              <div class="hidden md:flex flex-col items-end leading-tight px-2">
+                <span class="text-sm font-medium text-[var(--p-text-color)]">{{ u.nomComplet }}</span>
+                <span class="mb-eyebrow text-[0.62rem] text-[var(--p-primary-color)]">{{ u.roles.join(', ') }}</span>
+              </div>
+            }
+            <p-button label="Deconnexion" icon="pi pi-sign-out" severity="secondary" [outlined]="true" (onClick)="deconnecter()" />
+          </div>
+        </ng-template>
+      </p-menubar>
+    </div>
+  </div>
 } @else {
   <p-button
     [icon]="sombre() ? 'pi pi-sun' : 'pi pi-moon'"
     [text]="true"
     (onClick)="basculerTheme()"
-    styleClass="fixed top-4 right-4"
+    styleClass="fixed top-4 right-4 z-40"
     [ariaLabel]="'Basculer le theme'"
   />
 }
@@ -28,6 +50,6 @@
 <p-toast />
 <p-confirmdialog />
 
-<main class="p-4">
+<main class="mx-auto max-w-7xl p-4 sm:p-6">
   <router-outlet />
 </main>
