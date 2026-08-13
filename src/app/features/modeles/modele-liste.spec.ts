@@ -1,7 +1,9 @@
 import { TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
 import { MessageService, ConfirmationService } from 'primeng/api';
+import { Table } from 'primeng/table';
 
 import { ModeleListe } from './modele-liste';
 import { environment } from '../../core/environments/environment';
@@ -199,6 +201,31 @@ describe('ModeleListe', () => {
     expect(requete.request.params.get('page')).toBe('0');
     expect(requete.request.params.get('type')).toBe('NLP');
     requete.flush(pageVide(0));
+  });
+
+  // Regression : un changement de filtre depuis une page avancee doit aussi resynchroniser le
+  // paginateur du p-table lui-meme (signal premier), pas seulement la requete serveur. On pilote
+  // ici le vrai composant Table (via onPageChange, comme le ferait un clic utilisateur reel sur le
+  // paginateur) pour verifier que le lien bidirectionnel [(first)]="premier" ramene bien la page
+  // affichee a 0, et pas seulement la variable interne de PrimeNG.
+  it('un changement de filtre depuis une page avancee reinitialise le signal premier et le paginateur du p-table', () => {
+    const fixture = creer();
+    const composant = fixture.componentInstance;
+    const table = fixture.debugElement.query(By.directive(Table)).componentInstance as Table;
+
+    table.onPageChange({ first: 20, rows: 10 });
+    httpMock.expectOne((r) => r.url === `${environment.apiUrl}/modeles`).flush(pageVide(2));
+    fixture.detectChanges();
+
+    expect(composant['premier']()).toBe(20);
+    expect(table.first).toBe(20);
+
+    composant.surChangementType('NLP');
+    httpMock.expectOne((r) => r.url === `${environment.apiUrl}/modeles`).flush(pageVide(0));
+    fixture.detectChanges();
+
+    expect(composant['premier']()).toBe(0);
+    expect(table.first).toBe(0);
   });
 
   it('estAdmin est faux quand aucune session n est active', () => {

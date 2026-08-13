@@ -51,6 +51,7 @@ export class ExperimentationListe {
   protected readonly donnees = signal<Experimentation[]>([]);
   protected readonly total = signal(0);
   protected readonly chargement = signal(false);
+  protected readonly premier = signal(0);
   protected readonly datasets = signal<Dataset[]>([]);
   protected readonly modeles = signal<ModeleML[]>([]);
 
@@ -180,6 +181,7 @@ export class ExperimentationListe {
 
   private recharger(): void {
     if (this.dernierEvenement) {
+      this.premier.set(0);
       this.charger({ ...this.dernierEvenement, first: 0 });
     }
   }

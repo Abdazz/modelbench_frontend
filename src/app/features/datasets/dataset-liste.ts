@@ -44,6 +44,7 @@ export class DatasetListe {
   protected readonly donnees = signal<Dataset[]>([]);
   protected readonly total = signal(0);
   protected readonly chargement = signal(false);
+  protected readonly premier = signal(0);
   protected readonly formats = signal<ValeurReference[]>([]);
 
   protected readonly recherche = signal('');
@@ -142,6 +143,7 @@ export class DatasetListe {
 
   private recharger(): void {
     if (this.dernierEvenement) {
+      this.premier.set(0);
       this.charger({ ...this.dernierEvenement, first: 0 });
     }
   }
