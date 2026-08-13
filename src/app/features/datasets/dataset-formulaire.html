@@ -17,6 +17,11 @@
     <div class="flex flex-col gap-2">
       <label for="description">Description</label>
       <textarea pTextarea id="description" formControlName="description" rows="3"></textarea>
+      @if (formulaire.get('description')?.invalid && formulaire.get('description')?.touched) {
+        <small class="text-red-500">
+          {{ formulaire.get('description')?.errors?.['serveur'] ?? 'La description ne doit pas depasser 2000 caracteres.' }}
+        </small>
+      }
     </div>
 
     <div class="flex flex-col gap-2">

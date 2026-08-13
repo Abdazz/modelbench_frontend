@@ -42,7 +42,7 @@ export class DatasetFormulaire {
 
   protected readonly formulaire = this.fb.nonNullable.group({
     nom: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(120)]],
-    description: [''],
+    description: ['', [Validators.maxLength(2000)]],
     source: ['', [Validators.required, Validators.maxLength(255)]],
     nombreObservations: [0, [Validators.required, Validators.min(0)]],
     format: this.fb.control<FormatDataset | null>(null, Validators.required),

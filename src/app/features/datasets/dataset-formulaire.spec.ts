@@ -48,6 +48,21 @@ describe('DatasetFormulaire', () => {
     expect(controle.invalid).toBe(true);
   });
 
+  it('description de plus de 2000 caracteres est invalide', () => {
+    const fixture = creer();
+    const controle = fixture.componentInstance['formulaire'].get('description')!;
+    controle.setValue('a'.repeat(2001));
+    expect(controle.invalid).toBe(true);
+    expect(controle.errors?.['maxlength']).toBeTruthy();
+  });
+
+  it('description de 2000 caracteres exactement est valide', () => {
+    const fixture = creer();
+    const controle = fixture.componentInstance['formulaire'].get('description')!;
+    controle.setValue('a'.repeat(2000));
+    expect(controle.invalid).toBe(false);
+  });
+
   it('le formulaire est valide avec des valeurs conformes', () => {
     const fixture = creer();
     fixture.componentInstance['formulaire'].setValue({
@@ -129,5 +144,43 @@ describe('DatasetFormulaire', () => {
     expect(fixture.componentInstance['formulaire'].get('nom')?.errors).toEqual({
       serveur: 'Le nom est deja utilise',
     });
+  });
+
+  it('reinjecte l erreur serveur sur description et l affiche dans le gabarit', () => {
+    // La description est volontairement valide cote client (le validateur maxLength(2000)
+    // laisse donc passer soumettre()) : ce test couvre le cas defensif ou le serveur refuse
+    // quand meme la description (regle serveur plus stricte, ecart d encodage, etc.), pour
+    // s assurer que ce refus reste visible a l utilisateur et ne bloque pas silencieusement
+    // le bouton Enregistrer sans explication.
+    const fixture = creer();
+    fixture.componentInstance['formulaire'].setValue({
+      nom: 'MNIST',
+      description: 'Une description valide cote client',
+      source: 'Kaggle',
+      nombreObservations: 70000,
+      format: 'IMAGES',
+    });
+
+    fixture.componentInstance.soumettre();
+
+    httpMock.expectOne(`${environment.apiUrl}/datasets`).flush(
+      {
+        timestamp: '2026-08-12T10:00:00Z',
+        status: 400,
+        code: 'VALIDATION_ERROR',
+        message: 'La validation a echoue',
+        path: '/api/datasets',
+        errors: [{ champ: 'description', message: 'La description ne doit pas depasser 2000 caracteres' }],
+      },
+      { status: 400, statusText: 'Bad Request' },
+    );
+
+    const controle = fixture.componentInstance['formulaire'].get('description');
+    expect(controle?.errors).toEqual({ serveur: 'La description ne doit pas depasser 2000 caracteres' });
+
+    controle?.markAsTouched();
+    fixture.detectChanges();
+    const texte = (fixture.nativeElement as HTMLElement).textContent ?? '';
+    expect(texte).toContain('La description ne doit pas depasser 2000 caracteres');
   });
 });
