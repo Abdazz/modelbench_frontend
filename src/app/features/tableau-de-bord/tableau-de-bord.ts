@@ -1,6 +1,4 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { CardModule } from 'primeng/card';
-import { TagModule } from 'primeng/tag';
 import { TableModule } from 'primeng/table';
 import { ChartModule } from 'primeng/chart';
 
@@ -10,7 +8,7 @@ import { PourcentagePipe } from '../../shared/pipes/pourcentage.pipe';
 
 @Component({
   selector: 'app-tableau-de-bord',
-  imports: [CardModule, TagModule, TableModule, ChartModule, PourcentagePipe],
+  imports: [TableModule, ChartModule, PourcentagePipe],
   templateUrl: './tableau-de-bord.html',
 })
 export class TableauDeBord {
@@ -25,7 +23,9 @@ export class TableauDeBord {
       {
         label: 'Accuracy du meilleur modele',
         data: this.meilleursModeles().map((m) => Math.round(m.accuracy * 10000) / 100),
-        backgroundColor: '#6366f1',
+        backgroundColor: '#33b6a9',
+        borderRadius: 4,
+        maxBarThickness: 42,
       },
     ],
   }));
