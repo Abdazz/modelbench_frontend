@@ -1,59 +1,102 @@
-# ModelbenchFrontend
+# ModelBench, frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.14.
+Interface Angular pour la gestion de jeux de donnees, de modeles de Machine Learning et
+d'experimentations. Devoir de Master Intelligence Artificielle, Developpement Full-Stack, 2026/2027.
 
-## Development server
+Ce depot est le frontend seul. Le backend (`modelbench/`, Spring Boot) est un depot Git separe et
+doit tourner en parallele : voir son propre `README.md` pour l'installer et le lancer.
 
-To start a local development server, run:
+## Comptes de demonstration
 
-```bash
-ng serve
-```
+| Login | Mot de passe | Role | Droits |
+|---|---|---|---|
+| `admin` | `admin123` | ADMIN | Lecture et ecriture |
+| `chercheur` | `chercheur123` | CHERCHEUR | Lecture seule |
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Ils sont aussi affiches directement sur la page de connexion de l'application.
 
-## Code scaffolding
+## Prerequis
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+- Node.js 20 ou superieur et npm
+- Le backend `modelbench` demarre sur `http://localhost:8090` (profil `h2` recommande pour un
+  demarrage sans base a installer, voir son README) ; sans lui, la page de connexion affiche « Le
+  serveur est injoignable, verifiez qu il tourne sur le port 8090. »
 
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
+## Installation
 
 ```bash
-ng build
+npm install
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+## Lancement
 
 ```bash
-ng test
+npm start
 ```
 
-## Running end-to-end tests
+Sert l'application sur `http://localhost:4200`.
 
-For end-to-end (e2e) testing, run:
+## Lancer les tests unitaires
 
 ```bash
-ng e2e
+npm test
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+Tests Vitest : services HTTP (via `HttpTestingController`), validation des formulaires reactifs,
+pipes. Aucune dependance sur un backend demarre.
 
-## Additional Resources
+## Lancer les tests de bout en bout
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+```bash
+npm run e2e
+```
+
+Playwright demarre automatiquement le backend (profil `h2`) et `ng serve`, execute les sept
+scenarios de bout en bout et produit huit captures d'ecran dans `../docs/captures/`. Commande
+distincte de `npm test` : un evaluateur presse n'est jamais bloque par l'installation d'un
+navigateur.
+
+## Build de production
+
+```bash
+npm run build
+```
+
+## Configuration
+
+L'URL de base de l'API est codee dans `src/app/core/environments/environment.ts`
+(`http://localhost:8090/api` par defaut). La modifier si le backend tourne sur une autre adresse.
+
+## Arborescence
+
+```
+src/app/
+  app.ts, app.html             coquille : p-menubar + <router-outlet> + p-toast + p-confirmdialog
+  app.config.ts, app.routes.ts
+  core/
+    models/                    miroir TypeScript des DTO Java
+    services/                  un service HttpClient par entite (dataset, modele-ml,
+                               experimentation, reference, statistiques, auth)
+    interceptors/               erreur.interceptor.ts, auth.interceptor.ts
+    guards/                    auth.guard.ts, admin.guard.ts
+    environments/               environment.ts (apiUrl)
+  features/
+    auth/                      connexion.ts
+    datasets/                  dataset-liste.ts, dataset-formulaire.ts
+    modeles/                   modele-liste.ts, modele-formulaire.ts
+    experimentations/           experimentation-liste.ts, experimentation-formulaire.ts
+    tableau-de-bord/           tableau-de-bord.ts
+  shared/pipes/                duree.pipe.ts, pourcentage.pipe.ts
+e2e/                           scenarios Playwright
+```
+
+## Architecture
+
+Composants standalone et zoneless (defaut Angular 21), etat local en signals. Un `p-table` en mode
+`lazy` par entite : pagination, tri et filtrage executes cote serveur, jamais en memoire. Un
+intercepteur HTTP traduit chaque erreur `ApiError` du backend en notification `p-toast` ; les
+erreurs de validation de champ sont en plus reinjectees dans le `FormGroup` concerne. Un second
+intercepteur attache le jeton JWT a chaque appel `/api/**` et deconnecte l'utilisateur sur un 401.
+Les routes fonctionnelles sont protegees par un garde d'authentification ; l'adaptation a l'aide de
+`estAdmin()` masque les boutons d'ecriture pour le role `CHERCHEUR` plutot que de bloquer des routes,
+le backend revalidant de toute facon chaque operation d'ecriture cote serveur.
