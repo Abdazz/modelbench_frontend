@@ -3,7 +3,7 @@
   (visibleChange)="visibleChange.emit($event)"
   [modal]="true"
   [style]="{ width: '32rem' }"
-  [header]="mode() === 'creation' ? 'Nouvelle experimentation' : 'Modifier l experimentation'"
+  [header]="mode() === 'creation' ? 'Nouvelle expérimentation' : 'Modifier l\'expérimentation'"
 >
   <form [formGroup]="formulaire" (ngSubmit)="soumettre()" class="flex flex-col gap-5 pt-1">
     <div class="flex flex-col gap-2">
@@ -24,7 +24,7 @@
     </div>
 
     <div class="flex flex-col gap-2">
-      <label for="modeleId" class="mb-eyebrow text-[0.68rem] text-[var(--p-text-muted-color)]">Modele</label>
+      <label for="modeleId" class="mb-eyebrow text-[0.68rem] text-[var(--p-text-muted-color)]">Modèle</label>
       <p-select
         inputId="modeleId"
         formControlName="modeleId"
@@ -33,10 +33,10 @@
         optionValue="id"
         [filter]="true"
         filterBy="nom"
-        placeholder="Choisir un modele"
+        placeholder="Choisir un modèle"
       />
       @if (formulaire.get('modeleId')?.invalid && formulaire.get('modeleId')?.touched) {
-        <small class="text-red-500">Le modele est obligatoire.</small>
+        <small class="text-red-500">Le modèle est obligatoire.</small>
       }
     </div>
 
@@ -44,7 +44,7 @@
       <label for="accuracy" class="mb-eyebrow text-[0.68rem] text-[var(--p-text-muted-color)]">Accuracy</label>
       <p-inputnumber inputId="accuracy" formControlName="accuracy" [maxFractionDigits]="4" />
       @if (formulaire.get('accuracy')?.invalid && formulaire.get('accuracy')?.touched) {
-        <small class="text-red-500">L accuracy doit etre comprise entre 0 et 1.</small>
+        <small class="text-red-500">L'accuracy doit être comprise entre 0 et 1.</small>
       }
     </div>
 
@@ -52,20 +52,20 @@
       <label for="f1Score" class="mb-eyebrow text-[0.68rem] text-[var(--p-text-muted-color)]">F1 score</label>
       <p-inputnumber inputId="f1Score" formControlName="f1Score" [maxFractionDigits]="4" />
       @if (formulaire.get('f1Score')?.invalid && formulaire.get('f1Score')?.touched) {
-        <small class="text-red-500">Le F1 score doit etre compris entre 0 et 1.</small>
+        <small class="text-red-500">Le F1 score doit être compris entre 0 et 1.</small>
       }
     </div>
 
     <div class="flex flex-col gap-2">
-      <label for="dureeEntrainement" class="mb-eyebrow text-[0.68rem] text-[var(--p-text-muted-color)]">Duree d entrainement (secondes)</label>
+      <label for="dureeEntrainement" class="mb-eyebrow text-[0.68rem] text-[var(--p-text-muted-color)]">Durée d'entraînement (secondes)</label>
       <p-inputnumber inputId="dureeEntrainement" formControlName="dureeEntrainement" [min]="1" />
       @if (formulaire.get('dureeEntrainement')?.invalid && formulaire.get('dureeEntrainement')?.touched) {
-        <small class="text-red-500">La duree doit etre strictement positive.</small>
+        <small class="text-red-500">La durée doit être strictement positive.</small>
       }
     </div>
 
     <div class="flex flex-col gap-2">
-      <label for="dateExecution" class="mb-eyebrow text-[0.68rem] text-[var(--p-text-muted-color)]">Date d execution</label>
+      <label for="dateExecution" class="mb-eyebrow text-[0.68rem] text-[var(--p-text-muted-color)]">Date d'exécution</label>
       <p-datepicker
         inputId="dateExecution"
         formControlName="dateExecution"
@@ -74,7 +74,7 @@
         dateFormat="dd/mm/yy"
       />
       @if (formulaire.get('dateExecution')?.invalid && formulaire.get('dateExecution')?.touched) {
-        <small class="text-red-500">La date d execution ne peut pas etre dans le futur.</small>
+        <small class="text-red-500">La date d'exécution ne peut pas être dans le futur.</small>
       }
     </div>
 

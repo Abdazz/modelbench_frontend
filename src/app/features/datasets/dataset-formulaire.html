@@ -10,7 +10,7 @@
       <label for="nom" class="mb-eyebrow text-[0.68rem] text-[var(--p-text-muted-color)]">Nom</label>
       <input pInputText id="nom" formControlName="nom" />
       @if (formulaire.get('nom')?.invalid && formulaire.get('nom')?.touched) {
-        <small class="text-red-500">Le nom doit contenir entre 2 et 120 caracteres.</small>
+        <small class="text-red-500">Le nom doit contenir entre 2 et 120 caractères.</small>
       }
     </div>
 
@@ -19,7 +19,7 @@
       <textarea pTextarea id="description" formControlName="description" rows="3"></textarea>
       @if (formulaire.get('description')?.invalid && formulaire.get('description')?.touched) {
         <small class="text-red-500">
-          {{ formulaire.get('description')?.errors?.['serveur'] ?? 'La description ne doit pas depasser 2000 caracteres.' }}
+          {{ formulaire.get('description')?.errors?.['serveur'] ?? 'La description ne doit pas dépasser 2000 caractères.' }}
         </small>
       }
     </div>
@@ -33,10 +33,10 @@
     </div>
 
     <div class="flex flex-col gap-2">
-      <label for="nombreObservations" class="mb-eyebrow text-[0.68rem] text-[var(--p-text-muted-color)]">Nombre d observations</label>
+      <label for="nombreObservations" class="mb-eyebrow text-[0.68rem] text-[var(--p-text-muted-color)]">Nombre d'observations</label>
       <p-inputnumber inputId="nombreObservations" formControlName="nombreObservations" [min]="0" />
       @if (formulaire.get('nombreObservations')?.invalid && formulaire.get('nombreObservations')?.touched) {
-        <small class="text-red-500">Le nombre d observations ne peut etre negatif.</small>
+        <small class="text-red-500">Le nombre d'observations ne peut être négatif.</small>
       }
     </div>
 

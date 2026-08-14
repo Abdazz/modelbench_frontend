@@ -124,11 +124,11 @@ export class UtilisateurListe {
       this.auth.restaurerSession().subscribe();
       this.messages.add({
         severity: 'info',
-        summary: 'Compte modifie',
-        detail: 'Vous avez modifie votre propre compte. Reconnectez-vous si les changements ne sont pas immediatement visibles.',
+        summary: 'Compte modifié',
+        detail: 'Vous avez modifié votre propre compte. Reconnectez-vous si les changements ne sont pas immédiatement visibles.',
       });
     } else {
-      this.messages.add({ severity: 'success', summary: 'Enregistre', detail: 'L utilisateur a ete enregistre.' });
+      this.messages.add({ severity: 'success', summary: 'Enregistré', detail: 'L\'utilisateur a été enregistré.' });
     }
 
     this.recharger();
@@ -136,7 +136,7 @@ export class UtilisateurListe {
 
   confirmerSuppression(utilisateur: UtilisateurAdmin): void {
     this.confirmation.confirm({
-      message: `Supprimer l utilisateur "${utilisateur.nomComplet}" ?`,
+      message: `Supprimer l'utilisateur "${utilisateur.nomComplet}" ?`,
       header: 'Confirmation de suppression',
       icon: 'pi pi-exclamation-triangle',
       acceptButtonProps: { label: 'Oui', severity: 'danger' },
@@ -149,8 +149,8 @@ export class UtilisateurListe {
     this.service.supprimer(utilisateur.id).subscribe(() => {
       this.messages.add({
         severity: 'success',
-        summary: 'Supprime',
-        detail: `L utilisateur "${utilisateur.nomComplet}" a ete supprime.`,
+        summary: 'Supprimé',
+        detail: `L'utilisateur "${utilisateur.nomComplet}" a été supprimé.`,
       });
       this.recharger();
     });

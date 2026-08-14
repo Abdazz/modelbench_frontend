@@ -3,14 +3,14 @@
   (visibleChange)="visibleChange.emit($event)"
   [modal]="true"
   [style]="{ width: '30rem' }"
-  [header]="mode() === 'creation' ? 'Nouveau modele' : 'Modifier le modele'"
+  [header]="mode() === 'creation' ? 'Nouveau modèle' : 'Modifier le modèle'"
 >
   <form [formGroup]="formulaire" (ngSubmit)="soumettre()" class="flex flex-col gap-5 pt-1">
     <div class="flex flex-col gap-2">
       <label for="nom" class="mb-eyebrow text-[0.68rem] text-[var(--p-text-muted-color)]">Nom</label>
       <input pInputText id="nom" formControlName="nom" />
       @if (formulaire.get('nom')?.invalid && formulaire.get('nom')?.touched) {
-        <small class="text-red-500">Le nom doit contenir entre 2 et 120 caracteres.</small>
+        <small class="text-red-500">Le nom doit contenir entre 2 et 120 caractères.</small>
       }
     </div>
 
@@ -33,7 +33,7 @@
       <label for="algorithme" class="mb-eyebrow text-[0.68rem] text-[var(--p-text-muted-color)]">Algorithme</label>
       <input pInputText id="algorithme" formControlName="algorithme" />
       @if (formulaire.get('algorithme')?.invalid && formulaire.get('algorithme')?.touched) {
-        <small class="text-red-500">L algorithme est obligatoire.</small>
+        <small class="text-red-500">L'algorithme est obligatoire.</small>
       }
     </div>
 
@@ -41,7 +41,7 @@
       <label for="version" class="mb-eyebrow text-[0.68rem] text-[var(--p-text-muted-color)]">Version</label>
       <input pInputText id="version" formControlName="version" placeholder="1.0" />
       @if (formulaire.get('version')?.invalid && formulaire.get('version')?.touched) {
-        <small class="text-red-500">La version doit etre au format 1, 1.0 ou 1.0.0.</small>
+        <small class="text-red-500">La version doit être au format 1, 1.0 ou 1.0.0.</small>
       }
     </div>
 

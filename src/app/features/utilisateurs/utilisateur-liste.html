@@ -3,7 +3,7 @@
     <p class="mb-eyebrow text-[0.7rem] text-[var(--p-primary-color)]">Administration</p>
     <h1 class="text-[1.75rem] font-bold tracking-tight text-[var(--p-text-color)]">Utilisateurs</h1>
     <p class="text-sm text-[var(--p-text-muted-color)]">
-      Comptes ayant acces a l application et leurs roles.
+      Comptes ayant accès à l'application et leurs rôles.
     </p>
   </header>
 
@@ -39,7 +39,7 @@
               [options]="roles"
               optionLabel="libelle"
               optionValue="valeur"
-              placeholder="Tous les roles"
+              placeholder="Tous les rôles"
               [showClear]="true"
               (onChange)="surChangementRole($event.value)"
             />
@@ -53,7 +53,7 @@
         <tr>
           <th pSortableColumn="nomComplet"><span class="mb-eyebrow text-[0.68rem]">Nom complet</span> <p-sortIcon field="nomComplet" /></th>
           <th pSortableColumn="login"><span class="mb-eyebrow text-[0.68rem]">Email</span> <p-sortIcon field="login" /></th>
-          <th><span class="mb-eyebrow text-[0.68rem]">Role</span></th>
+          <th><span class="mb-eyebrow text-[0.68rem]">Rôle</span></th>
           <th><span class="mb-eyebrow text-[0.68rem]">Statut</span></th>
           <th><span class="mb-eyebrow text-[0.68rem]">Actions</span></th>
         </tr>
@@ -91,7 +91,7 @@
 
       <ng-template #emptymessage>
         <tr>
-          <td colspan="5" class="text-center text-[var(--p-text-muted-color)]">Aucun utilisateur trouve.</td>
+          <td colspan="5" class="text-center text-[var(--p-text-muted-color)]">Aucun utilisateur trouvé.</td>
         </tr>
       </ng-template>
 

@@ -3,7 +3,7 @@
   (visibleChange)="visibleChange.emit($event)"
   [modal]="true"
   [style]="{ width: '30rem' }"
-  [header]="mode() === 'creation' ? 'Nouvel utilisateur' : 'Modifier l utilisateur'"
+  [header]="mode() === 'creation' ? 'Nouvel utilisateur' : 'Modifier l\'utilisateur'"
 >
   <form [formGroup]="formulaire" (ngSubmit)="soumettre()" class="flex flex-col gap-5 pt-1">
     <div class="flex flex-col gap-2">
@@ -31,22 +31,22 @@
         <small class="text-[var(--p-text-muted-color)]">Laisser vide pour ne pas changer le mot de passe.</small>
       }
       @if (formulaire.get('motDePasse')?.invalid && formulaire.get('motDePasse')?.touched) {
-        <small class="text-red-500">Le mot de passe doit contenir au moins 8 caracteres.</small>
+        <small class="text-red-500">Le mot de passe doit contenir au moins 8 caractères.</small>
       }
     </div>
 
     <div class="flex flex-col gap-2">
-      <label for="role" class="mb-eyebrow text-[0.68rem] text-[var(--p-text-muted-color)]">Role</label>
+      <label for="role" class="mb-eyebrow text-[0.68rem] text-[var(--p-text-muted-color)]">Rôle</label>
       <p-select
         inputId="role"
         formControlName="role"
         [options]="roles"
         optionLabel="libelle"
         optionValue="valeur"
-        placeholder="Choisir un role"
+        placeholder="Choisir un rôle"
       />
       @if (formulaire.get('role')?.invalid && formulaire.get('role')?.touched) {
-        <small class="text-red-500">Le role est obligatoire.</small>
+        <small class="text-red-500">Le rôle est obligatoire.</small>
       }
     </div>
 
