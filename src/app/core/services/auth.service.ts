@@ -61,8 +61,24 @@ export class AuthService {
     localStorage.removeItem(CLE_STOCKAGE);
   }
 
-  private restaurerSession(): Observable<Utilisateur> {
-    return this.http.get<Utilisateur>(`${this.base}/moi`);
+  restaurerSession(): Observable<Utilisateur> {
+    return this.http.get<Utilisateur>(`${this.base}/moi`).pipe(
+      tap((utilisateur) => this.mettreAJourSession(utilisateur)),
+    );
+  }
+
+  private mettreAJourSession(utilisateur: Utilisateur): void {
+    const courante = this.session();
+    if (!courante) {
+      return;
+    }
+    const misAJour: SessionStockee = {
+      ...courante,
+      nomComplet: utilisateur.nomComplet,
+      roles: utilisateur.roles,
+    };
+    this.session.set(misAJour);
+    localStorage.setItem(CLE_STOCKAGE, JSON.stringify(misAJour));
   }
 
   private ouvrirSession(reponse: ConnexionResponse): void {

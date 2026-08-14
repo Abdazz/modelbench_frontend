@@ -11,6 +11,7 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { ConfirmationService, MessageService } from 'primeng/api';
 
 import { UtilisateurService } from '../../core/services/utilisateur.service';
+import { AuthService } from '../../core/services/auth.service';
 import { RoleUtilisateur, UtilisateurAdmin } from '../../core/models/utilisateur.model';
 import { UtilisateurFormulaire } from './utilisateur-formulaire';
 
@@ -38,6 +39,7 @@ export class UtilisateurListe {
   private readonly service = inject(UtilisateurService);
   private readonly confirmation = inject(ConfirmationService);
   private readonly messages = inject(MessageService);
+  private readonly auth = inject(AuthService);
 
   protected readonly roles = ROLES;
 
@@ -113,7 +115,22 @@ export class UtilisateurListe {
 
   surSauvegarde(): void {
     this.dialogueVisible.set(false);
-    this.messages.add({ severity: 'success', summary: 'Enregistre', detail: 'L utilisateur a ete enregistre.' });
+
+    const compteModifie = this.utilisateurEnEdition();
+    const estMonPropreCompte =
+      compteModifie !== null && compteModifie.login === this.auth.utilisateur()?.login;
+
+    if (estMonPropreCompte) {
+      this.auth.restaurerSession().subscribe();
+      this.messages.add({
+        severity: 'info',
+        summary: 'Compte modifie',
+        detail: 'Vous avez modifie votre propre compte. Reconnectez-vous si les changements ne sont pas immediatement visibles.',
+      });
+    } else {
+      this.messages.add({ severity: 'success', summary: 'Enregistre', detail: 'L utilisateur a ete enregistre.' });
+    }
+
     this.recharger();
   }
 

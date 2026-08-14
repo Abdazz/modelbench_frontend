@@ -51,10 +51,9 @@ pipes. Aucune dependance sur un backend demarre.
 npm run e2e
 ```
 
-Playwright demarre automatiquement le backend (profil `h2`) et `ng serve`, execute les dix
-scenarios de bout en bout et produit neuf captures d'ecran dans `../docs/captures/`. Commande
-distincte de `npm test` : un evaluateur presse n'est jamais bloque par l'installation d'un
-navigateur.
+Playwright demarre automatiquement le backend (profil `h2`) et `ng serve`, execute les scenarios de
+bout en bout et produit des captures d'ecran dans `../docs/captures/`. Commande distincte de
+`npm test` : un evaluateur presse n'est jamais bloque par l'installation d'un navigateur.
 
 ## Build de production
 
@@ -76,7 +75,7 @@ src/app/
   core/
     models/                    miroir TypeScript des DTO Java
     services/                  un service HttpClient par entite (dataset, modele-ml,
-                               experimentation, reference, statistiques, auth)
+                               experimentation, reference, statistiques, auth, utilisateur)
     interceptors/               erreur.interceptor.ts, auth.interceptor.ts
     guards/                    auth.guard.ts, admin.guard.ts
     environments/               environment.ts (apiUrl)

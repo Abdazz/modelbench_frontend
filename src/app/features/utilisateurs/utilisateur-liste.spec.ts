@@ -4,6 +4,7 @@ import { provideHttpClientTesting, HttpTestingController } from '@angular/common
 import { MessageService, ConfirmationService } from 'primeng/api';
 
 import { UtilisateurListe } from './utilisateur-liste';
+import { AuthService } from '../../core/services/auth.service';
 import { environment } from '../../core/environments/environment';
 import { PageResponse } from '../../core/models/page-response.model';
 import { UtilisateurAdmin } from '../../core/models/utilisateur.model';
@@ -87,6 +88,39 @@ describe('UtilisateurListe', () => {
     fixture.componentInstance.ouvrirCreation();
 
     fixture.componentInstance.surSauvegarde();
+
+    expect(fixture.componentInstance['dialogueVisible']()).toBe(false);
+    httpMock.expectOne((r) => r.url === `${environment.apiUrl}/utilisateurs`).flush(pageVide());
+  });
+
+  it('surSauvegarde revalide la session et previent au lieu du message habituel quand on modifie son propre compte', () => {
+    const fixture = creer();
+    const auth = TestBed.inject(AuthService);
+    auth.connecter({ login: 'admin@example.com', motDePasse: 'admin123' }).subscribe();
+    httpMock.expectOne(`${environment.apiUrl}/auth/login`).flush({
+      token: 't',
+      typeToken: 'Bearer',
+      expirationSecondes: 28800,
+      login: 'admin@example.com',
+      nomComplet: 'Administrateur',
+      roles: ['ADMIN'],
+    });
+
+    const monCompte: UtilisateurAdmin = {
+      id: 1,
+      login: 'admin@example.com',
+      nomComplet: 'Administrateur',
+      role: 'ADMIN',
+      actif: true,
+    };
+    fixture.componentInstance.ouvrirEdition(monCompte);
+    fixture.componentInstance.surSauvegarde();
+
+    httpMock.expectOne(`${environment.apiUrl}/auth/moi`).flush({
+      login: 'admin@example.com',
+      nomComplet: 'Administrateur',
+      roles: ['CHERCHEUR'],
+    });
 
     expect(fixture.componentInstance['dialogueVisible']()).toBe(false);
     httpMock.expectOne((r) => r.url === `${environment.apiUrl}/utilisateurs`).flush(pageVide());

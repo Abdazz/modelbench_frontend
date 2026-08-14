@@ -157,4 +157,22 @@ describe('AuthService', () => {
 
     expect(service.estConnecte()).toBe(true);
   });
+
+  it('rafraichit le nom complet et les roles stockes quand ils different de la reponse de /auth/moi', async () => {
+    localStorage.setItem(
+      'modelbench.session',
+      JSON.stringify({ token: 'valide', login: 'admin', nomComplet: 'Ancien nom', roles: ['CHERCHEUR'] }),
+    );
+
+    const service = creerService();
+
+    await Promise.resolve();
+
+    const requete = httpMock.expectOne(`${environment.apiUrl}/auth/moi`);
+    requete.flush({ login: 'admin', nomComplet: 'Nouveau nom', roles: ['ADMIN'] });
+
+    expect(service.utilisateur()?.nomComplet).toBe('Nouveau nom');
+    expect(service.estAdmin()).toBe(true);
+    expect(JSON.parse(localStorage.getItem('modelbench.session')!).nomComplet).toBe('Nouveau nom');
+  });
 });

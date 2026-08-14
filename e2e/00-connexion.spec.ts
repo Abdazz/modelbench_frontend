@@ -4,7 +4,7 @@ test('connexion admin puis chercheur, les boutons d ecriture disparaissent en le
   page,
 }) => {
   await page.goto('/connexion');
-  await page.getByLabel('Identifiant').fill('admin');
+  await page.getByLabel('Email').fill('admin@example.com');
   await page.getByLabel('Mot de passe').fill('admin123');
   await page.getByRole('button', { name: 'Se connecter' }).click();
   await expect(page).toHaveURL('/tableau-de-bord');
@@ -14,7 +14,7 @@ test('connexion admin puis chercheur, les boutons d ecriture disparaissent en le
   await page.getByRole('button', { name: 'Deconnexion' }).click();
   await expect(page).toHaveURL('/connexion');
 
-  await page.getByLabel('Identifiant').fill('chercheur');
+  await page.getByLabel('Email').fill('chercheur@example.com');
   await page.getByLabel('Mot de passe').fill('chercheur123');
   await page.getByRole('button', { name: 'Se connecter' }).click();
   await expect(page).toHaveURL('/tableau-de-bord');
