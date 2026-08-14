@@ -1,0 +1,113 @@
+<div class="flex flex-col gap-8 pb-6">
+  <header class="flex flex-col gap-1.5">
+    <p class="mb-eyebrow text-[0.7rem] text-[var(--p-primary-color)]">Administration</p>
+    <h1 class="text-[1.75rem] font-bold tracking-tight text-[var(--p-text-color)]">Utilisateurs</h1>
+    <p class="text-sm text-[var(--p-text-muted-color)]">
+      Comptes ayant acces a l application et leurs roles.
+    </p>
+  </header>
+
+  <div class="rounded-xl border border-[var(--p-content-border-color)] bg-[var(--p-content-background)] p-2 sm:p-3">
+    <p-table
+      [value]="donnees()"
+      [lazy]="true"
+      (onLazyLoad)="charger($event)"
+      [totalRecords]="total()"
+      [loading]="chargement()"
+      [paginator]="true"
+      [(first)]="premier"
+      [rows]="10"
+      [rowsPerPageOptions]="[5, 10, 25, 50]"
+      dataKey="id"
+      [tableStyle]="{ 'min-width': '48rem' }"
+    >
+      <ng-template #caption>
+        <div class="flex flex-wrap items-center justify-between gap-3 py-1">
+          <div class="flex flex-wrap items-center gap-3">
+            <p-iconfield>
+              <p-inputicon class="pi pi-search" />
+              <input
+                pInputText
+                type="text"
+                placeholder="Rechercher..."
+                [attr.aria-label]="'Recherche globale'"
+                (input)="surRecherche($any($event.target).value)"
+              />
+            </p-iconfield>
+
+            <p-select
+              [options]="roles"
+              optionLabel="libelle"
+              optionValue="valeur"
+              placeholder="Tous les roles"
+              [showClear]="true"
+              (onChange)="surChangementRole($event.value)"
+            />
+          </div>
+
+          <p-button label="Nouvel utilisateur" icon="pi pi-plus" (onClick)="ouvrirCreation()" />
+        </div>
+      </ng-template>
+
+      <ng-template #header>
+        <tr>
+          <th pSortableColumn="nomComplet"><span class="mb-eyebrow text-[0.68rem]">Nom complet</span> <p-sortIcon field="nomComplet" /></th>
+          <th pSortableColumn="login"><span class="mb-eyebrow text-[0.68rem]">Email</span> <p-sortIcon field="login" /></th>
+          <th><span class="mb-eyebrow text-[0.68rem]">Role</span></th>
+          <th><span class="mb-eyebrow text-[0.68rem]">Statut</span></th>
+          <th><span class="mb-eyebrow text-[0.68rem]">Actions</span></th>
+        </tr>
+      </ng-template>
+
+      <ng-template #body let-utilisateur>
+        <tr>
+          <td class="font-medium">{{ utilisateur.nomComplet }}</td>
+          <td class="font-mono text-[0.85rem]">{{ utilisateur.login }}</td>
+          <td><p-tag [value]="utilisateur.role" styleClass="font-mono text-[0.7rem] tracking-wide" /></td>
+          <td>
+            <p-tag
+              [value]="utilisateur.actif ? 'Actif' : 'Inactif'"
+              [severity]="utilisateur.actif ? 'success' : 'danger'"
+            />
+          </td>
+          <td class="flex gap-1">
+            <p-button
+              icon="pi pi-pencil"
+              [text]="true"
+              severity="secondary"
+              [ariaLabel]="'Modifier'"
+              (onClick)="ouvrirEdition(utilisateur)"
+            />
+            <p-button
+              icon="pi pi-trash"
+              [text]="true"
+              severity="danger"
+              [ariaLabel]="'Supprimer'"
+              (onClick)="confirmerSuppression(utilisateur)"
+            />
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template #emptymessage>
+        <tr>
+          <td colspan="5" class="text-center text-[var(--p-text-muted-color)]">Aucun utilisateur trouve.</td>
+        </tr>
+      </ng-template>
+
+      <ng-template #loadingbody>
+        <tr>
+          <td colspan="5"><p-skeleton height="2rem" /></td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+<app-utilisateur-formulaire
+  [visible]="dialogueVisible()"
+  [mode]="modeDialogue()"
+  [donneesInitiales]="utilisateurEnEdition()"
+  (visibleChange)="dialogueVisible.set($event)"
+  (sauvegarde)="surSauvegarde()"
+/>

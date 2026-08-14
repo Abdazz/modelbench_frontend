@@ -1,0 +1,63 @@
+<p-dialog
+  [visible]="visible()"
+  (visibleChange)="visibleChange.emit($event)"
+  [modal]="true"
+  [style]="{ width: '30rem' }"
+  [header]="mode() === 'creation' ? 'Nouvel utilisateur' : 'Modifier l utilisateur'"
+>
+  <form [formGroup]="formulaire" (ngSubmit)="soumettre()" class="flex flex-col gap-5 pt-1">
+    <div class="flex flex-col gap-2">
+      <label for="nomComplet" class="mb-eyebrow text-[0.68rem] text-[var(--p-text-muted-color)]">Nom complet</label>
+      <input pInputText id="nomComplet" formControlName="nomComplet" />
+      @if (formulaire.get('nomComplet')?.invalid && formulaire.get('nomComplet')?.touched) {
+        <small class="text-red-500">Le nom complet est obligatoire.</small>
+      }
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label for="login" class="mb-eyebrow text-[0.68rem] text-[var(--p-text-muted-color)]">Email</label>
+      <input pInputText id="login" type="email" formControlName="login" autocomplete="username" />
+      @if (formulaire.get('login')?.invalid && formulaire.get('login')?.touched) {
+        <small class="text-red-500">
+          {{ formulaire.get('login')?.errors?.['serveur'] ?? 'Une adresse email valide est obligatoire.' }}
+        </small>
+      }
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label for="motDePasse" class="mb-eyebrow text-[0.68rem] text-[var(--p-text-muted-color)]">Mot de passe</label>
+      <input pInputText id="motDePasse" type="password" formControlName="motDePasse" autocomplete="new-password" />
+      @if (mode() === 'edition') {
+        <small class="text-[var(--p-text-muted-color)]">Laisser vide pour ne pas changer le mot de passe.</small>
+      }
+      @if (formulaire.get('motDePasse')?.invalid && formulaire.get('motDePasse')?.touched) {
+        <small class="text-red-500">Le mot de passe doit contenir au moins 8 caracteres.</small>
+      }
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label for="role" class="mb-eyebrow text-[0.68rem] text-[var(--p-text-muted-color)]">Role</label>
+      <p-select
+        inputId="role"
+        formControlName="role"
+        [options]="roles"
+        optionLabel="libelle"
+        optionValue="valeur"
+        placeholder="Choisir un role"
+      />
+      @if (formulaire.get('role')?.invalid && formulaire.get('role')?.touched) {
+        <small class="text-red-500">Le role est obligatoire.</small>
+      }
+    </div>
+
+    <div class="flex items-center justify-between gap-2">
+      <label for="actif" class="mb-eyebrow text-[0.68rem] text-[var(--p-text-muted-color)]">Compte actif</label>
+      <p-toggleswitch inputId="actif" formControlName="actif" />
+    </div>
+
+    <div class="flex justify-end gap-2 pt-1">
+      <p-button type="button" label="Annuler" severity="secondary" [outlined]="true" (onClick)="fermer()" />
+      <p-button type="submit" label="Enregistrer" [loading]="enCours()" [disabled]="formulaire.invalid" />
+    </div>
+  </form>
+</p-dialog>
