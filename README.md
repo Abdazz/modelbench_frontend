@@ -10,8 +10,8 @@ doit tourner en parallele : voir son propre `README.md` pour l'installer et le l
 
 | Login | Mot de passe | Role | Droits |
 |---|---|---|---|
-| `admin` | `admin123` | ADMIN | Lecture et ecriture |
-| `chercheur` | `chercheur123` | CHERCHEUR | Lecture seule |
+| `admin@example.com` | `admin123` | ADMIN | Lecture et ecriture |
+| `chercheur@example.com` | `chercheur123` | CHERCHEUR | Lecture seule |
 
 Ils sont aussi affiches directement sur la page de connexion de l'application.
 
@@ -85,6 +85,7 @@ src/app/
     datasets/                  dataset-liste.ts, dataset-formulaire.ts
     modeles/                   modele-liste.ts, modele-formulaire.ts
     experimentations/           experimentation-liste.ts, experimentation-formulaire.ts
+    utilisateurs/               utilisateur-liste.ts, utilisateur-formulaire.ts
     tableau-de-bord/           tableau-de-bord.ts
   shared/pipes/                duree.pipe.ts, pourcentage.pipe.ts
 e2e/                           scenarios Playwright
@@ -100,3 +101,8 @@ intercepteur attache le jeton JWT a chaque appel `/api/**` et deconnecte l'utili
 Les routes fonctionnelles sont protegees par un garde d'authentification ; l'adaptation a l'aide de
 `estAdmin()` masque les boutons d'ecriture pour le role `CHERCHEUR` plutot que de bloquer des routes,
 le backend revalidant de toute facon chaque operation d'ecriture cote serveur.
+
+La route `/utilisateurs`, elle, est en plus protegee par un garde `adminGuard` : contrairement aux
+trois autres entites, la gestion des comptes n'est pas seulement masquee cote UI pour un role
+CHERCHEUR, elle est routee en dehors de son atteinte, le backend refusant de toute facon la
+ressource `/api/utilisateurs` a quiconque n'est pas ADMIN, y compris en lecture.

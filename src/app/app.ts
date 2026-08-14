@@ -23,12 +23,18 @@ export class App {
 
   protected readonly sombre = signal(false);
 
-  protected readonly elementsMenu = computed<MenuItem[]>(() => [
-    { label: 'Tableau de bord', icon: 'pi pi-home', routerLink: '/tableau-de-bord' },
-    { label: 'Datasets', icon: 'pi pi-database', routerLink: '/datasets' },
-    { label: 'Modeles', icon: 'pi pi-share-alt', routerLink: '/modeles' },
-    { label: 'Experimentations', icon: 'pi pi-chart-line', routerLink: '/experimentations' },
-  ]);
+  protected readonly elementsMenu = computed<MenuItem[]>(() => {
+    const elements: MenuItem[] = [
+      { label: 'Tableau de bord', icon: 'pi pi-home', routerLink: '/tableau-de-bord' },
+      { label: 'Datasets', icon: 'pi pi-database', routerLink: '/datasets' },
+      { label: 'Modeles', icon: 'pi pi-share-alt', routerLink: '/modeles' },
+      { label: 'Experimentations', icon: 'pi pi-chart-line', routerLink: '/experimentations' },
+    ];
+    if (this.auth.estAdmin()) {
+      elements.push({ label: 'Utilisateurs', icon: 'pi pi-users', routerLink: '/utilisateurs' });
+    }
+    return elements;
+  });
 
   basculerTheme(): void {
     this.sombre.update((valeur) => !valeur);

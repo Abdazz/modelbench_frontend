@@ -54,14 +54,28 @@ describe('App', () => {
     expect(compiled.querySelector('p-menubar')).toBeNull();
   });
 
-  it('affiche le menubar avec 4 entrees quand l utilisateur est connecte', () => {
+  it('affiche 5 entrees de menu, dont Utilisateurs, pour un role ADMIN', () => {
     localStorage.setItem(
       'modelbench.session',
-      JSON.stringify({ token: 't', login: 'admin', nomComplet: 'Administrateur', roles: ['ADMIN'] }),
+      JSON.stringify({ token: 't', login: 'admin@example.com', nomComplet: 'Administrateur', roles: ['ADMIN'] }),
     );
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
-    expect(fixture.componentInstance['elementsMenu']().length).toBe(4);
+    const elements = fixture.componentInstance['elementsMenu']();
+    expect(elements.length).toBe(5);
+    expect(elements.some((e) => e.label === 'Utilisateurs')).toBe(true);
+  });
+
+  it('affiche 4 entrees de menu, sans Utilisateurs, pour un role CHERCHEUR', () => {
+    localStorage.setItem(
+      'modelbench.session',
+      JSON.stringify({ token: 't', login: 'chercheur@example.com', nomComplet: 'Chercheur', roles: ['CHERCHEUR'] }),
+    );
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const elements = fixture.componentInstance['elementsMenu']();
+    expect(elements.length).toBe(4);
+    expect(elements.some((e) => e.label === 'Utilisateurs')).toBe(false);
   });
 
   it('basculerTheme applique la classe app-dark sur le document', () => {
