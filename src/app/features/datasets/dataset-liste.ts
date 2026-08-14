@@ -1,4 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { TableModule, TableLazyLoadEvent } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
@@ -28,6 +29,8 @@ import { DatasetFormulaire } from './dataset-formulaire';
     SelectModule,
     TagModule,
     SkeletonModule,
+    DatePipe,
+    DecimalPipe,
     DatasetFormulaire,
   ],
   templateUrl: './dataset-liste.html',
@@ -115,7 +118,7 @@ export class DatasetListe {
 
   surSauvegarde(): void {
     this.dialogueVisible.set(false);
-    this.messages.add({ severity: 'success', summary: 'Enregistre', detail: 'Le dataset a ete enregistre.' });
+    this.messages.add({ severity: 'success', summary: 'Enregistré', detail: 'Le dataset a été enregistré.' });
     this.recharger();
   }
 
@@ -134,8 +137,8 @@ export class DatasetListe {
     this.service.supprimer(dataset.id).subscribe(() => {
       this.messages.add({
         severity: 'success',
-        summary: 'Supprime',
-        detail: `Le dataset "${dataset.nom}" a ete supprime.`,
+        summary: 'Supprimé',
+        detail: `Le dataset "${dataset.nom}" a été supprimé.`,
       });
       this.recharger();
     });

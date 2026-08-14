@@ -1,4 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { TableModule, TableLazyLoadEvent } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
@@ -28,6 +29,7 @@ import { ModeleFormulaire } from './modele-formulaire';
     SelectModule,
     TagModule,
     SkeletonModule,
+    DatePipe,
     ModeleFormulaire,
   ],
   templateUrl: './modele-liste.html',
@@ -115,13 +117,13 @@ export class ModeleListe {
 
   surSauvegarde(): void {
     this.dialogueVisible.set(false);
-    this.messages.add({ severity: 'success', summary: 'Enregistre', detail: 'Le modele a ete enregistre.' });
+    this.messages.add({ severity: 'success', summary: 'Enregistré', detail: 'Le modèle a été enregistré.' });
     this.recharger();
   }
 
   confirmerSuppression(modele: ModeleML): void {
     this.confirmation.confirm({
-      message: `Supprimer le modele "${modele.nom}" (version ${modele.version}) ?`,
+      message: `Supprimer le modèle "${modele.nom}" (version ${modele.version}) ?`,
       header: 'Confirmation de suppression',
       icon: 'pi pi-exclamation-triangle',
       acceptButtonProps: { label: 'Oui', severity: 'danger' },
@@ -134,8 +136,8 @@ export class ModeleListe {
     this.service.supprimer(modele.id).subscribe(() => {
       this.messages.add({
         severity: 'success',
-        summary: 'Supprime',
-        detail: `Le modele "${modele.nom}" a ete supprime.`,
+        summary: 'Supprimé',
+        detail: `Le modèle "${modele.nom}" a été supprimé.`,
       });
       this.recharger();
     });

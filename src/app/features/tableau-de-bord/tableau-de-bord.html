@@ -1,9 +1,9 @@
 <div class="flex flex-col gap-8 pb-6">
   <header class="flex flex-col gap-1.5">
-    <p class="mb-eyebrow text-[0.7rem] text-[var(--p-primary-color)]">Vue d ensemble</p>
+    <p class="mb-eyebrow text-[0.7rem] text-[var(--p-primary-color)]">Vue d'ensemble</p>
     <h1 class="text-[1.75rem] font-bold tracking-tight text-[var(--p-text-color)]">Tableau de bord</h1>
     <p class="text-sm text-[var(--p-text-muted-color)]">
-      Etat courant des datasets, modeles et experimentations enregistres dans ModelBench.
+      État courant des datasets, modèles et expérimentations enregistrées dans ModelBench.
     </p>
   </header>
 
@@ -16,33 +16,33 @@
         </span>
       </div>
       <div class="mt-3 font-mono text-4xl font-semibold tabular-nums leading-none text-[var(--p-text-color)]">
-        {{ synthese()?.nbDatasets ?? '-' }}
+        {{ (synthese()?.nbDatasets | number) ?? '-' }}
       </div>
       <div class="mt-4 h-px w-10 bg-[var(--p-primary-color)]"></div>
     </div>
 
     <div class="rounded-xl border border-[var(--p-content-border-color)] bg-[var(--p-content-background)] p-5">
       <div class="flex items-center justify-between">
-        <span class="mb-eyebrow text-[0.65rem] text-[var(--p-text-muted-color)]">Modeles</span>
+        <span class="mb-eyebrow text-[0.65rem] text-[var(--p-text-muted-color)]">Modèles</span>
         <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--p-primary-color)]/10 text-[var(--p-primary-color)]">
           <i class="pi pi-share-alt text-base"></i>
         </span>
       </div>
       <div class="mt-3 font-mono text-4xl font-semibold tabular-nums leading-none text-[var(--p-text-color)]">
-        {{ synthese()?.nbModeles ?? '-' }}
+        {{ (synthese()?.nbModeles | number) ?? '-' }}
       </div>
       <div class="mt-4 h-px w-10 bg-[var(--p-primary-color)]"></div>
     </div>
 
     <div class="rounded-xl border border-[var(--p-content-border-color)] bg-[var(--p-content-background)] p-5">
       <div class="flex items-center justify-between">
-        <span class="mb-eyebrow text-[0.65rem] text-[var(--p-text-muted-color)]">Experimentations</span>
+        <span class="mb-eyebrow text-[0.65rem] text-[var(--p-text-muted-color)]">Expérimentations</span>
         <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--p-primary-color)]/10 text-[var(--p-primary-color)]">
           <i class="pi pi-chart-line text-base"></i>
         </span>
       </div>
       <div class="mt-3 font-mono text-4xl font-semibold tabular-nums leading-none text-[var(--p-text-color)]">
-        {{ synthese()?.nbExperimentations ?? '-' }}
+        {{ (synthese()?.nbExperimentations | number) ?? '-' }}
       </div>
       <div class="mt-4 h-px w-10 bg-[var(--p-primary-color)]"></div>
     </div>
@@ -57,13 +57,13 @@
             <i class="pi pi-trophy text-lg"></i>
           </span>
           <div class="flex flex-col gap-1">
-            <span class="mb-eyebrow text-[0.65rem] text-[var(--p-text-muted-color)]">Meilleure experimentation</span>
+            <span class="mb-eyebrow text-[0.65rem] text-[var(--p-text-muted-color)]">Meilleure expérimentation</span>
             @if (s.meilleureExperimentation; as meilleure) {
               <span class="text-lg font-semibold text-[var(--p-text-color)]">
                 {{ meilleure.datasetNom }} <span class="text-[var(--p-text-muted-color)] font-normal">&#215;</span> {{ meilleure.modeleNom }}
               </span>
             } @else {
-              <span class="text-sm text-[var(--p-text-muted-color)]">Aucune experimentation enregistree pour le moment.</span>
+              <span class="text-sm text-[var(--p-text-muted-color)]">Aucune expérimentation enregistrée pour le moment.</span>
             }
           </div>
         </div>
@@ -88,7 +88,7 @@
       <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--p-primary-color)]/10 text-[var(--p-primary-color)]">
         <i class="pi pi-chart-bar text-sm"></i>
       </span>
-      <span class="mb-eyebrow text-[0.7rem] text-[var(--p-text-color)]">Comparaison des meilleurs modeles par dataset</span>
+      <span class="mb-eyebrow text-[0.7rem] text-[var(--p-text-color)]">Comparaison des meilleurs modèles par dataset</span>
     </div>
     <div class="mx-auto w-full max-w-3xl py-2">
       <p-chart type="bar" [data]="donneesGraphique()" [options]="optionsGraphique" />
@@ -100,13 +100,13 @@
       <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--p-primary-color)]/10 text-[var(--p-primary-color)]">
         <i class="pi pi-table text-sm"></i>
       </span>
-      <span class="mb-eyebrow text-[0.7rem] text-[var(--p-text-color)]">Meilleur modele par dataset</span>
+      <span class="mb-eyebrow text-[0.7rem] text-[var(--p-text-color)]">Meilleur modèle par dataset</span>
     </div>
     <p-table [value]="meilleursModeles()" [stripedRows]="true" size="small" [tableStyle]="{ 'min-width': '32rem' }">
       <ng-template #header>
         <tr>
           <th><span class="mb-eyebrow text-[0.68rem]">Dataset</span></th>
-          <th><span class="mb-eyebrow text-[0.68rem]">Modele</span></th>
+          <th><span class="mb-eyebrow text-[0.68rem]">Modèle</span></th>
           <th class="text-right"><span class="mb-eyebrow text-[0.68rem]">Accuracy</span></th>
           <th class="text-right"><span class="mb-eyebrow text-[0.68rem]">F1 score</span></th>
         </tr>
@@ -121,7 +121,7 @@
       </ng-template>
       <ng-template #emptymessage>
         <tr>
-          <td colspan="4" class="text-center text-[var(--p-text-muted-color)]">Aucune experimentation enregistree.</td>
+          <td colspan="4" class="text-center text-[var(--p-text-muted-color)]">Aucune expérimentation enregistrée.</td>
         </tr>
       </ng-template>
     </p-table>

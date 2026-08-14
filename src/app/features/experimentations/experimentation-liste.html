@@ -1,9 +1,9 @@
 <div class="flex flex-col gap-8 pb-6">
   <header class="flex flex-col gap-1.5">
     <p class="mb-eyebrow text-[0.7rem] text-[var(--p-primary-color)]">Registre</p>
-    <h1 class="text-[1.75rem] font-bold tracking-tight text-[var(--p-text-color)]">Experimentations</h1>
+    <h1 class="text-[1.75rem] font-bold tracking-tight text-[var(--p-text-color)]">Expérimentations</h1>
     <p class="text-sm text-[var(--p-text-muted-color)]">
-      Resultats de benchmark obtenus en croisant un dataset et un modele.
+      Résultats de benchmark obtenus en croisant un dataset et un modèle.
     </p>
   </header>
 
@@ -47,7 +47,7 @@
               [options]="modeles()"
               optionLabel="nom"
               optionValue="id"
-              placeholder="Tous les modeles"
+              placeholder="Tous les modèles"
               [showClear]="true"
               (onChange)="surChangementModele($event.value)"
             />
@@ -60,7 +60,7 @@
                 styleClass="w-32"
                 (onInput)="surAccuracyMin($event.value)"
               />
-              <span class="mb-eyebrow text-[0.65rem] text-[var(--p-text-muted-color)]">a</span>
+              <span class="mb-eyebrow text-[0.65rem] text-[var(--p-text-muted-color)]">à</span>
               <p-inputnumber
                 placeholder="Accuracy max"
                 [min]="0"
@@ -73,7 +73,7 @@
           </div>
 
           @if (estAdmin()) {
-            <p-button label="Nouvelle experimentation" icon="pi pi-plus" (onClick)="ouvrirCreation()" />
+            <p-button label="Nouvelle expérimentation" icon="pi pi-plus" (onClick)="ouvrirCreation()" />
           }
         </div>
       </ng-template>
@@ -81,11 +81,11 @@
       <ng-template #header>
         <tr>
           <th><span class="mb-eyebrow text-[0.68rem]">Dataset</span></th>
-          <th><span class="mb-eyebrow text-[0.68rem]">Modele</span></th>
+          <th><span class="mb-eyebrow text-[0.68rem]">Modèle</span></th>
           <th pSortableColumn="accuracy" class="text-right"><span class="mb-eyebrow text-[0.68rem]">Accuracy</span> <p-sortIcon field="accuracy" /></th>
           <th pSortableColumn="f1Score" class="text-right"><span class="mb-eyebrow text-[0.68rem]">F1 score</span> <p-sortIcon field="f1Score" /></th>
-          <th class="text-right"><span class="mb-eyebrow text-[0.68rem]">Duree d entrainement</span></th>
-          <th pSortableColumn="dateExecution"><span class="mb-eyebrow text-[0.68rem]">Date d execution</span> <p-sortIcon field="dateExecution" /></th>
+          <th class="text-right"><span class="mb-eyebrow text-[0.68rem]">Durée d'entraînement</span></th>
+          <th pSortableColumn="dateExecution"><span class="mb-eyebrow text-[0.68rem]">Date d'exécution</span> <p-sortIcon field="dateExecution" /></th>
           @if (estAdmin()) {
             <th><span class="mb-eyebrow text-[0.68rem]">Actions</span></th>
           }
@@ -99,7 +99,7 @@
           <td class="text-right font-mono tabular-nums">{{ experimentation.accuracy | pourcentage }}</td>
           <td class="text-right font-mono tabular-nums">{{ experimentation.f1Score | pourcentage }}</td>
           <td class="text-right font-mono tabular-nums">{{ experimentation.dureeEntrainement | duree }}</td>
-          <td class="font-mono text-[var(--p-text-muted-color)]">{{ experimentation.dateExecution }}</td>
+          <td class="font-mono text-[var(--p-text-muted-color)]">{{ experimentation.dateExecution | date:'dd-MM-yyyy' }}</td>
           @if (estAdmin()) {
             <td class="flex gap-1">
               <p-button
@@ -123,7 +123,7 @@
 
       <ng-template #emptymessage>
         <tr>
-          <td [attr.colspan]="estAdmin() ? 7 : 6" class="text-center text-[var(--p-text-muted-color)]">Aucune experimentation trouvee.</td>
+          <td [attr.colspan]="estAdmin() ? 7 : 6" class="text-center text-[var(--p-text-muted-color)]">Aucune expérimentation trouvée.</td>
         </tr>
       </ng-template>
 

@@ -1,4 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { TableModule, TableLazyLoadEvent } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
@@ -32,6 +33,7 @@ import { ExperimentationFormulaire } from './experimentation-formulaire';
     SelectModule,
     InputNumberModule,
     SkeletonModule,
+    DatePipe,
     DureePipe,
     PourcentagePipe,
     ExperimentationFormulaire,
@@ -151,15 +153,15 @@ export class ExperimentationListe {
     this.dialogueVisible.set(false);
     this.messages.add({
       severity: 'success',
-      summary: 'Enregistre',
-      detail: 'L experimentation a ete enregistree.',
+      summary: 'Enregistré',
+      detail: 'L\'expérimentation a été enregistrée.',
     });
     this.recharger();
   }
 
   confirmerSuppression(experimentation: Experimentation): void {
     this.confirmation.confirm({
-      message: `Supprimer cette experimentation (${experimentation.datasetNom} / ${experimentation.modeleNom}) ?`,
+      message: `Supprimer cette expérimentation (${experimentation.datasetNom} / ${experimentation.modeleNom}) ?`,
       header: 'Confirmation de suppression',
       icon: 'pi pi-exclamation-triangle',
       acceptButtonProps: { label: 'Oui', severity: 'danger' },
@@ -172,8 +174,8 @@ export class ExperimentationListe {
     this.service.supprimer(experimentation.id).subscribe(() => {
       this.messages.add({
         severity: 'success',
-        summary: 'Supprime',
-        detail: 'L experimentation a ete supprimee.',
+        summary: 'Supprimé',
+        detail: 'L\'expérimentation a été supprimée.',
       });
       this.recharger();
     });
