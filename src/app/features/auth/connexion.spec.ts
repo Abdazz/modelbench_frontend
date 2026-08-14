@@ -35,7 +35,7 @@ describe('Connexion', () => {
     const router = TestBed.inject(Router);
     const navigation = vi.spyOn(router, 'navigateByUrl');
 
-    composant['formulaire'].setValue({ login: 'admin', motDePasse: 'admin123' });
+    composant['formulaire'].setValue({ login: 'admin@example.com', motDePasse: 'admin123' });
     composant.soumettre();
 
     httpMock.expectOne(`${environment.apiUrl}/auth/login`).flush({
@@ -54,7 +54,7 @@ describe('Connexion', () => {
     const fixture = TestBed.createComponent(Connexion);
     const composant = fixture.componentInstance;
 
-    composant['formulaire'].setValue({ login: 'admin', motDePasse: 'mauvais' });
+    composant['formulaire'].setValue({ login: 'admin@example.com', motDePasse: 'mauvais' });
     composant.soumettre();
 
     httpMock.expectOne(`${environment.apiUrl}/auth/login`).flush(
@@ -63,5 +63,15 @@ describe('Connexion', () => {
     );
 
     expect(composant['erreur']()).toBe('Identifiants invalides');
+  });
+
+  it('le controle login est invalide avec une adresse qui n est pas un email', () => {
+    const fixture = TestBed.createComponent(Connexion);
+    const composant = fixture.componentInstance;
+    const controle = composant['formulaire'].get('login')!;
+
+    controle.setValue('admin');
+
+    expect(controle.invalid).toBe(true);
   });
 });

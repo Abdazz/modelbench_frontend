@@ -16,10 +16,10 @@
     <div class="rounded-xl border border-[var(--p-content-border-color)] bg-[var(--p-content-background)] p-8 shadow-[0_24px_48px_-24px_rgba(5,30,27,0.35)]">
       <form [formGroup]="formulaire" (ngSubmit)="soumettre()" class="flex flex-col gap-5">
         <div class="flex flex-col gap-2">
-          <label for="login" class="mb-eyebrow text-[0.68rem] text-[var(--p-text-muted-color)]">Identifiant</label>
+          <label for="login" class="mb-eyebrow text-[0.68rem] text-[var(--p-text-muted-color)]">Email</label>
           <p-iconfield class="w-full">
             <p-inputicon class="pi pi-user" />
-            <input pInputText id="login" formControlName="login" autocomplete="username" class="w-full" />
+            <input pInputText id="login" type="email" formControlName="login" autocomplete="username" class="w-full" />
           </p-iconfield>
         </div>
 
@@ -55,8 +55,8 @@
     <div class="mt-5 rounded-lg border border-dashed border-[var(--p-content-border-color)] px-4 py-3 font-mono text-[0.72rem] leading-relaxed text-[var(--p-text-muted-color)]">
       <div class="mb-eyebrow mb-1.5 text-[0.6rem] text-[var(--p-text-color)]">Comptes de demonstration</div>
       <div class="flex flex-wrap gap-x-5 gap-y-1">
-        <span><strong class="text-[var(--p-text-color)]">admin</strong> / admin123 <span class="opacity-70">(lecture-ecriture)</span></span>
-        <span><strong class="text-[var(--p-text-color)]">chercheur</strong> / chercheur123 <span class="opacity-70">(lecture seule)</span></span>
+        <span><strong class="text-[var(--p-text-color)]">admin&#64;example.com</strong> / admin123 <span class="opacity-70">(lecture-ecriture)</span></span>
+        <span><strong class="text-[var(--p-text-color)]">chercheur&#64;example.com</strong> / chercheur123 <span class="opacity-70">(lecture seule)</span></span>
       </div>
     </div>
   </div>

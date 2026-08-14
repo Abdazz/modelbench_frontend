@@ -22,7 +22,7 @@ export class Connexion {
   private readonly router = inject(Router);
 
   protected readonly formulaire = this.fb.nonNullable.group({
-    login: ['', Validators.required],
+    login: ['', [Validators.required, Validators.email]],
     motDePasse: ['', Validators.required],
   });
 
