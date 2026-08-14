@@ -9,7 +9,7 @@ test('supprimer un dataset reference declenche le toast d erreur metier 409', as
   await ligne.getByRole('button', { name: 'Supprimer' }).click();
   await page.getByRole('button', { name: 'Oui' }).click();
 
-  await expect(page.getByText(/est utilise par \d+ experimentation/)).toBeVisible();
+  await expect(page.getByText(/est utilisé par \d+ expérimentation/)).toBeVisible();
   await page.screenshot({ path: '../docs/captures/04-conflit-suppression.png', fullPage: true });
 
   await expect(ligne).toBeVisible();

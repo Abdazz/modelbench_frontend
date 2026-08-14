@@ -7,10 +7,10 @@ test('navigation entre les quatre sections et indicateurs du tableau de bord', a
   await page.getByRole('link', { name: 'Datasets' }).click();
   await expect(page).toHaveURL('/datasets');
 
-  await page.getByRole('link', { name: 'Modeles' }).click();
+  await page.getByRole('link', { name: 'Modèles' }).click();
   await expect(page).toHaveURL('/modeles');
 
-  await page.getByRole('link', { name: 'Experimentations' }).click();
+  await page.getByRole('link', { name: 'Expérimentations' }).click();
   await expect(page).toHaveURL('/experimentations');
 
   await page.getByRole('link', { name: 'Tableau de bord' }).click();

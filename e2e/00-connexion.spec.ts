@@ -11,7 +11,7 @@ test('connexion admin puis chercheur, les boutons d ecriture disparaissent en le
   await expect(page.getByText('Administrateur du laboratoire')).toBeVisible();
   await page.screenshot({ path: '../docs/captures/00-connexion.png', fullPage: true });
 
-  await page.getByRole('button', { name: 'Deconnexion' }).click();
+  await page.getByRole('button', { name: 'Déconnexion' }).click();
   await expect(page).toHaveURL('/connexion');
 
   await page.getByLabel('Email').fill('chercheur@example.com');

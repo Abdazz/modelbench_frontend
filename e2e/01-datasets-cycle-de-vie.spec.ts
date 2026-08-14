@@ -15,22 +15,22 @@ test('cycle de vie complet d un dataset : creer, voir, editer, supprimer', async
   const dialogue = page.getByRole('dialog');
   await page.getByLabel('Nom', { exact: true }).fill('E2E Dataset Temporaire');
   await page.getByLabel('Source').fill('Suite Playwright');
-  await page.getByLabel('Nombre d observations').fill('100');
+  await page.getByLabel('Nombre d\'observations').fill('100');
   await dialogue.getByLabel('Format').click();
   await page.getByRole('option', { name: 'CSV' }).click();
   await page.getByRole('button', { name: 'Enregistrer' }).click();
 
-  await expect(page.getByText('Le dataset a ete enregistre.')).toBeVisible();
+  await expect(page.getByText('Le dataset a été enregistré.')).toBeVisible();
   const ligne = page.getByRole('row', { name: /E2E Dataset Temporaire/ });
   await expect(ligne).toBeVisible();
 
   await ligne.getByRole('button', { name: 'Modifier' }).click();
   await page.getByLabel('Source').fill('Suite Playwright modifiee');
   await page.getByRole('button', { name: 'Enregistrer' }).click();
-  await expect(page.getByText('Le dataset a ete enregistre.')).toBeVisible();
+  await expect(page.getByText('Le dataset a été enregistré.')).toBeVisible();
 
   await ligne.getByRole('button', { name: 'Supprimer' }).click();
   await page.getByRole('button', { name: 'Oui' }).click();
-  await expect(page.getByText('a ete supprime.')).toBeVisible();
+  await expect(page.getByText('a été supprimé.')).toBeVisible();
   await expect(page.getByRole('cell', { name: 'E2E Dataset Temporaire' })).toHaveCount(0);
 });

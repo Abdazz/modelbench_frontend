@@ -12,11 +12,11 @@ test('creation d un utilisateur puis refus de l auto-suppression du compte conne
   await page.getByLabel('Nom complet').fill('E2E Utilisateur Temporaire');
   await dialogue.getByLabel('Email').fill('e2e.temporaire@example.com');
   await page.getByLabel('Mot de passe').fill('motdepasse123');
-  await dialogue.getByLabel('Role').click();
+  await dialogue.getByLabel('Rôle').click();
   await page.getByRole('option', { name: 'Chercheur' }).click();
   await page.getByRole('button', { name: 'Enregistrer' }).click();
 
-  await expect(page.getByText('L utilisateur a ete enregistre.')).toBeVisible();
+  await expect(page.getByText('L\'utilisateur a été enregistré.')).toBeVisible();
   const ligneCreee = page.getByRole('row', { name: /E2E Utilisateur Temporaire/ });
   await expect(ligneCreee).toBeVisible();
 
@@ -24,11 +24,11 @@ test('creation d un utilisateur puis refus de l auto-suppression du compte conne
   await ligneAdmin.getByRole('button', { name: 'Supprimer' }).click();
   await page.getByRole('button', { name: 'Oui' }).click();
 
-  await expect(page.getByText(/ne peut pas se supprimer lui-meme/)).toBeVisible();
+  await expect(page.getByText(/ne peut pas se supprimer lui-même/)).toBeVisible();
   await expect(ligneAdmin).toBeVisible();
 
   await ligneCreee.getByRole('button', { name: 'Supprimer' }).click();
   await page.getByRole('button', { name: 'Oui' }).click();
-  await expect(page.getByText('a ete supprime.')).toBeVisible();
+  await expect(page.getByText('a été supprimé.')).toBeVisible();
   await expect(page.getByRole('cell', { name: 'E2E Utilisateur Temporaire' })).toHaveCount(0);
 });

@@ -5,7 +5,7 @@ test('cycle de vie complet d un modele : creer avec selection reelle du type, ed
 }) => {
   await page.goto('/modeles');
 
-  await page.getByRole('button', { name: 'Nouveau modele' }).click();
+  await page.getByRole('button', { name: 'Nouveau modèle' }).click();
 
   const dialogue = page.getByRole('dialog');
   await page.getByLabel('Nom').fill('E2E Modele Temporaire');
@@ -32,7 +32,7 @@ test('cycle de vie complet d un modele : creer avec selection reelle du type, ed
   await page.getByRole('button', { name: 'Enregistrer' }).click();
   // .last() : le toast de creation peut encore etre a l ecran quand celui de l edition apparait
   // (duree d affichage par defaut de p-toast), auquel cas deux toasts identiques coexistent.
-  await expect(page.getByText('Le modele a ete enregistre.').last()).toBeVisible();
+  await expect(page.getByText('Le modèle a été enregistré.').last()).toBeVisible();
 
   const ligne = page.getByRole('row', { name: /E2E Modele Temporaire/ });
   await expect(ligne).toBeVisible();
@@ -40,10 +40,10 @@ test('cycle de vie complet d un modele : creer avec selection reelle du type, ed
   await ligne.getByRole('button', { name: 'Modifier' }).click();
   await page.getByLabel('Algorithme').fill('Suite Playwright modifiee');
   await page.getByRole('button', { name: 'Enregistrer' }).click();
-  await expect(page.getByText('Le modele a ete enregistre.').last()).toBeVisible();
+  await expect(page.getByText('Le modèle a été enregistré.').last()).toBeVisible();
 
   await ligne.getByRole('button', { name: 'Supprimer' }).click();
   await page.getByRole('button', { name: 'Oui' }).click();
-  await expect(page.getByText('a ete supprime.')).toBeVisible();
+  await expect(page.getByText('a été supprimé.')).toBeVisible();
   await expect(page.getByRole('cell', { name: 'E2E Modele Temporaire' })).toHaveCount(0);
 });
