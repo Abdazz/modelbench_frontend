@@ -1,25 +1,5 @@
-/*
- * PrimeNG applique deja .p-menubar-item-link-active sur l entree de routerLink correspondant a
- * la route active (voir Menubar > Router dans la doc PrimeNG), mais Aura ne lui donne pas de
- * traitement visuel fort par defaut. ::ng-deep est necessaire ici : ces classes vivent dans le
- * DOM interne de p-menubar, hors de portee de l encapsulation de style du composant hote.
- */
-::ng-deep .p-menubar-item-link-active {
-  color: var(--p-primary-color) !important;
+.mb-nav-active {
+  color: var(--p-primary-color);
   font-weight: 600;
-}
-
-::ng-deep .p-menubar-item-link-active::after {
-  content: '';
-  position: absolute;
-  left: 0.75rem;
-  right: 0.75rem;
-  bottom: 0.25rem;
-  height: 2px;
-  background: var(--p-primary-color);
-  border-radius: 1px;
-}
-
-::ng-deep .p-menubar-item-link {
-  position: relative;
+  background: var(--p-content-hover-background);
 }

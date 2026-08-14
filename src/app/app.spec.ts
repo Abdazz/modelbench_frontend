@@ -6,25 +6,6 @@ import { MessageService, ConfirmationService } from 'primeng/api';
 
 import { App } from './app';
 
-// jsdom ne fournit pas window.matchMedia : PrimeNG Menubar l'utilise pour son
-// mode responsive (bindMatchMediaListener). Ce polyfill minimal permet le
-// rendu du composant dans l'environnement de test.
-if (!window.matchMedia) {
-  Object.defineProperty(window, 'matchMedia', {
-    writable: true,
-    value: (query: string) => ({
-      matches: false,
-      media: query,
-      onchange: null,
-      addListener: () => {},
-      removeListener: () => {},
-      addEventListener: () => {},
-      removeEventListener: () => {},
-      dispatchEvent: () => false,
-    }),
-  });
-}
-
 describe('App', () => {
   beforeEach(async () => {
     localStorage.clear();
@@ -47,11 +28,12 @@ describe('App', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('n affiche pas le menubar quand l utilisateur n est pas connecte', () => {
+  it('n affiche pas la sidebar quand l utilisateur n est pas connecte', () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('p-menubar')).toBeNull();
+    expect(compiled.querySelector('aside')).toBeNull();
+    expect(compiled.querySelector('p-drawer')).toBeNull();
   });
 
   it('affiche 5 entrees de menu, dont Utilisateurs, pour un role ADMIN', () => {
@@ -76,6 +58,26 @@ describe('App', () => {
     const elements = fixture.componentInstance['elementsMenu']();
     expect(elements.length).toBe(4);
     expect(elements.some((e) => e.label === 'Utilisateurs')).toBe(false);
+  });
+
+  it('basculerSidebar inverse le mode reduit de la sidebar', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    expect(fixture.componentInstance['sidebarReduite']()).toBe(false);
+    fixture.componentInstance.basculerSidebar();
+    expect(fixture.componentInstance['sidebarReduite']()).toBe(true);
+    fixture.componentInstance.basculerSidebar();
+    expect(fixture.componentInstance['sidebarReduite']()).toBe(false);
+  });
+
+  it('basculerMenuMobile inverse la visibilite du drawer mobile', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    expect(fixture.componentInstance['menuMobileOuvert']()).toBe(false);
+    fixture.componentInstance.basculerMenuMobile();
+    expect(fixture.componentInstance['menuMobileOuvert']()).toBe(true);
+    fixture.componentInstance.basculerMenuMobile();
+    expect(fixture.componentInstance['menuMobileOuvert']()).toBe(false);
   });
 
   it('basculerTheme applique la classe app-dark sur le document', () => {

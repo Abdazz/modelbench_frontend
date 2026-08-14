@@ -1,40 +1,106 @@
 @if (estConnecte()) {
-  <div class="sticky top-0 z-40 border-b border-[var(--p-content-border-color)] bg-[var(--p-content-background)]/95 backdrop-blur">
-    <div class="mx-auto max-w-7xl">
-      <p-menubar
-        [model]="elementsMenu()"
-        styleClass="!border-0 !bg-transparent !rounded-none !px-2"
-        [dt]="{ root: { padding: '0.625rem 0.25rem', gap: '0.125rem' } }"
+  <aside
+    class="hidden lg:flex fixed inset-y-0 left-0 z-40 flex-col border-r border-[var(--p-content-border-color)] bg-[var(--p-content-background)] transition-[width] duration-200"
+    [class]="sidebarReduite() ? 'w-[72px]' : 'w-60'"
+  >
+    <div
+      class="flex h-16 shrink-0 items-center gap-2.5 border-b border-[var(--p-content-border-color)] px-4"
+      [class]="sidebarReduite() ? 'justify-center px-0' : ''"
+    >
+      <span class="relative flex h-2.5 w-2.5 shrink-0">
+        <span class="mb-status-dot absolute inline-flex h-full w-full rounded-full bg-[var(--p-primary-color)] opacity-75"></span>
+        <span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-[var(--p-primary-color)]"></span>
+      </span>
+      @if (!sidebarReduite()) {
+        <span class="font-sans text-[1.05rem] font-bold tracking-tight text-[var(--p-text-color)]">ModelBench</span>
+        <span class="mb-eyebrow text-[0.65rem] text-[var(--p-text-muted-color)]">Lab</span>
+      }
+    </div>
+
+    <div class="flex-1 overflow-y-auto py-3">
+      <ng-container *ngTemplateOutlet="navListe; context: { reduit: sidebarReduite() }" />
+    </div>
+
+    <div class="border-t border-[var(--p-content-border-color)] p-2">
+      <button
+        type="button"
+        (click)="basculerSidebar()"
+        class="flex w-full items-center justify-center rounded-md p-2 text-[var(--p-text-muted-color)] transition-colors hover:bg-[var(--p-content-hover-background)]"
+        [attr.aria-label]="sidebarReduite() ? 'Déplier le menu' : 'Réduire le menu'"
       >
-        <ng-template #start>
-          <a routerLink="/tableau-de-bord" class="flex items-center gap-2.5 pr-4 mr-2 border-r border-[var(--p-content-border-color)]">
-            <span class="relative flex h-2.5 w-2.5">
-              <span class="mb-status-dot absolute inline-flex h-full w-full rounded-full bg-[var(--p-primary-color)] opacity-75"></span>
-              <span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-[var(--p-primary-color)]"></span>
-            </span>
-            <span class="font-sans text-[1.05rem] font-bold tracking-tight text-[var(--p-text-color)]">ModelBench</span>
-            <span class="mb-eyebrow hidden sm:inline text-[0.65rem] text-[var(--p-text-muted-color)]">Lab</span>
-          </a>
-        </ng-template>
-        <ng-template #end>
-          <div class="flex items-center gap-1.5 pl-2">
-            <p-button
-              [icon]="sombre() ? 'pi pi-sun' : 'pi pi-moon'"
-              [text]="true"
-              severity="secondary"
-              (onClick)="basculerTheme()"
-              [ariaLabel]="'Basculer le theme'"
-            />
-            @if (utilisateur(); as u) {
-              <div class="hidden md:flex flex-col items-end leading-tight px-2">
-                <span class="text-sm font-medium text-[var(--p-text-color)]">{{ u.nomComplet }}</span>
-                <span class="mb-eyebrow text-[0.62rem] text-[var(--p-primary-color)]">{{ u.roles.join(', ') }}</span>
-              </div>
-            }
-            <p-button label="Deconnexion" icon="pi pi-sign-out" severity="secondary" [outlined]="true" (onClick)="deconnecter()" />
+        <i class="pi" [class]="sidebarReduite() ? 'pi-angle-double-right' : 'pi-angle-double-left'"></i>
+      </button>
+    </div>
+  </aside>
+
+  <p-drawer [visible]="menuMobileOuvert()" (visibleChange)="menuMobileOuvert.set($event)" position="left" styleClass="w-72">
+    <ng-template #header>
+      <div class="flex items-center gap-2.5">
+        <span class="relative flex h-2.5 w-2.5">
+          <span class="mb-status-dot absolute inline-flex h-full w-full rounded-full bg-[var(--p-primary-color)] opacity-75"></span>
+          <span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-[var(--p-primary-color)]"></span>
+        </span>
+        <span class="font-sans text-[1.05rem] font-bold tracking-tight text-[var(--p-text-color)]">ModelBench</span>
+      </div>
+    </ng-template>
+    <ng-container *ngTemplateOutlet="navListe; context: { reduit: false }" />
+  </p-drawer>
+
+  <ng-template #navListe let-reduit="reduit">
+    <nav class="flex flex-col gap-1 px-2">
+      @for (item of elementsMenu(); track item.routerLink) {
+        <a
+          [routerLink]="item.routerLink"
+          routerLinkActive="mb-nav-active"
+          (click)="menuMobileOuvert.set(false)"
+          [pTooltip]="reduit ? item.label ?? '' : ''"
+          tooltipPosition="right"
+          class="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm text-[var(--p-text-color)] transition-colors hover:bg-[var(--p-content-hover-background)]"
+          [class]="reduit ? 'justify-center' : ''"
+        >
+          <i [class]="item.icon" class="shrink-0 text-base"></i>
+          @if (!reduit) {
+            <span>{{ item.label }}</span>
+          }
+        </a>
+      }
+    </nav>
+  </ng-template>
+
+  <div class="transition-[margin] duration-200" [class]="decalageSidebar()">
+    <div
+      class="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-[var(--p-content-border-color)] bg-[var(--p-content-background)]/95 px-4 backdrop-blur"
+    >
+      <div class="flex items-center gap-3">
+        <button
+          type="button"
+          class="flex items-center justify-center rounded-md p-2 text-[var(--p-text-color)] hover:bg-[var(--p-content-hover-background)] lg:hidden"
+          (click)="basculerMenuMobile()"
+          aria-label="Ouvrir le menu"
+        >
+          <i class="pi pi-bars text-lg"></i>
+        </button>
+        <a routerLink="/tableau-de-bord" class="flex items-center gap-2 lg:hidden">
+          <span class="font-sans text-[1.05rem] font-bold tracking-tight text-[var(--p-text-color)]">ModelBench</span>
+        </a>
+        <p-button
+          [icon]="sombre() ? 'pi pi-sun' : 'pi pi-moon'"
+          [text]="true"
+          severity="secondary"
+          (onClick)="basculerTheme()"
+          [ariaLabel]="'Basculer le thème'"
+        />
+      </div>
+
+      <div class="flex items-center gap-1.5">
+        @if (utilisateur(); as u) {
+          <div class="hidden md:flex flex-col items-end leading-tight px-2">
+            <span class="text-sm font-medium text-[var(--p-text-color)]">{{ u.nomComplet }}</span>
+            <span class="mb-eyebrow text-[0.62rem] text-[var(--p-primary-color)]">{{ u.roles.join(', ') }}</span>
           </div>
-        </ng-template>
-      </p-menubar>
+        }
+        <p-button label="Déconnexion" icon="pi pi-sign-out" severity="secondary" [outlined]="true" (onClick)="deconnecter()" />
+      </div>
     </div>
   </div>
 } @else {
@@ -43,13 +109,15 @@
     [text]="true"
     (onClick)="basculerTheme()"
     styleClass="fixed top-4 right-4 z-40"
-    [ariaLabel]="'Basculer le theme'"
+    [ariaLabel]="'Basculer le thème'"
   />
 }
 
 <p-toast />
 <p-confirmdialog />
 
-<main class="mx-auto max-w-7xl p-4 sm:p-6">
-  <router-outlet />
-</main>
+<div class="transition-[margin] duration-200" [class]="decalageSidebar()">
+  <main class="mx-auto max-w-7xl p-4 sm:p-6">
+    <router-outlet />
+  </main>
+</div>
