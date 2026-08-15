@@ -30,16 +30,16 @@ export class ExperimentationService {
     if (params.recherche) {
       httpParams = httpParams.set('recherche', params.recherche);
     }
-    if (params.datasetId !== undefined) {
+    if (params.datasetId != null) {
       httpParams = httpParams.set('datasetId', params.datasetId);
     }
-    if (params.modeleId !== undefined) {
+    if (params.modeleId != null) {
       httpParams = httpParams.set('modeleId', params.modeleId);
     }
-    if (params.accuracyMin !== undefined) {
+    if (params.accuracyMin != null) {
       httpParams = httpParams.set('accuracyMin', params.accuracyMin);
     }
-    if (params.accuracyMax !== undefined) {
+    if (params.accuracyMax != null) {
       httpParams = httpParams.set('accuracyMax', params.accuracyMax);
     }
     return this.http.get<PageResponse<Experimentation>>(this.base, { params: httpParams });
