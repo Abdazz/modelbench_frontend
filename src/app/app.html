@@ -104,13 +104,14 @@
     </div>
   </div>
 } @else {
-  <p-button
-    [icon]="sombre() ? 'pi pi-sun' : 'pi pi-moon'"
-    [text]="true"
-    (onClick)="basculerTheme()"
-    styleClass="fixed top-4 right-4 z-40"
-    [ariaLabel]="'Basculer le thème'"
-  />
+  <div class="fixed top-4 right-4 z-40">
+    <p-button
+      [icon]="sombre() ? 'pi pi-sun' : 'pi pi-moon'"
+      [text]="true"
+      (onClick)="basculerTheme()"
+      [ariaLabel]="'Basculer le thème'"
+    />
+  </div>
 }
 
 <p-toast />
