@@ -23,6 +23,7 @@
         optionLabel="libelle"
         optionValue="valeur"
         placeholder="Choisir un type"
+        appendTo="body"
       />
       @if (formulaire.get('type')?.invalid && formulaire.get('type')?.touched) {
         <small class="text-red-500">Le type est obligatoire.</small>

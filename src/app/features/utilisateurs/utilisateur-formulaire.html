@@ -44,6 +44,7 @@
         optionLabel="libelle"
         optionValue="valeur"
         placeholder="Choisir un rôle"
+        appendTo="body"
       />
       @if (formulaire.get('role')?.invalid && formulaire.get('role')?.touched) {
         <small class="text-red-500">Le rôle est obligatoire.</small>

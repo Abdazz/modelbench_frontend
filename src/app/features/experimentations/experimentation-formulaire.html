@@ -17,6 +17,7 @@
         [filter]="true"
         filterBy="nom"
         placeholder="Choisir un dataset"
+        appendTo="body"
       />
       @if (formulaire.get('datasetId')?.invalid && formulaire.get('datasetId')?.touched) {
         <small class="text-red-500">Le dataset est obligatoire.</small>
@@ -34,6 +35,7 @@
         [filter]="true"
         filterBy="nom"
         placeholder="Choisir un modèle"
+        appendTo="body"
       />
       @if (formulaire.get('modeleId')?.invalid && formulaire.get('modeleId')?.touched) {
         <small class="text-red-500">Le modèle est obligatoire.</small>

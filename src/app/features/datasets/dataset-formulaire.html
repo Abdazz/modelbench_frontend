@@ -49,6 +49,7 @@
         optionLabel="libelle"
         optionValue="valeur"
         placeholder="Choisir un format"
+        appendTo="body"
       />
       @if (formulaire.get('format')?.invalid && formulaire.get('format')?.touched) {
         <small class="text-red-500">Le format est obligatoire.</small>
