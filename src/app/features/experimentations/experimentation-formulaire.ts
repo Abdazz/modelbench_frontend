@@ -27,6 +27,25 @@ function dateNonFutureValidator(controle: AbstractControl): ValidationErrors | n
   return valeur.getTime() > Date.now() ? { futur: true } : null;
 }
 
+function dureeStrictementPositiveValidator(groupe: AbstractControl): ValidationErrors | null {
+  const heures = groupe.get('dureeHeures')?.value ?? 0;
+  const minutes = groupe.get('dureeMinutes')?.value ?? 0;
+  const secondes = groupe.get('dureeSecondes')?.value ?? 0;
+  return heures * 3600 + minutes * 60 + secondes > 0 ? null : { dureeNulle: true };
+}
+
+function decomposerDureeEnSecondes(secondesTotal: number): {
+  dureeHeures: number;
+  dureeMinutes: number;
+  dureeSecondes: number;
+} {
+  return {
+    dureeHeures: Math.floor(secondesTotal / 3600),
+    dureeMinutes: Math.floor((secondesTotal % 3600) / 60),
+    dureeSecondes: Math.floor(secondesTotal % 60),
+  };
+}
+
 @Component({
   selector: 'app-experimentation-formulaire',
   imports: [ReactiveFormsModule, DialogModule, ButtonModule, SelectModule, InputNumberModule, DatePickerModule],
@@ -47,22 +66,27 @@ export class ExperimentationFormulaire {
 
   protected readonly enCours = signal(false);
 
-  protected readonly formulaire = this.fb.nonNullable.group({
-    datasetId: this.fb.control<number | null>(null, Validators.required),
-    modeleId: this.fb.control<number | null>(null, Validators.required),
-    accuracy: this.fb.control<number | null>(null, [
-      Validators.required,
-      Validators.min(0),
-      Validators.max(1),
-    ]),
-    f1Score: this.fb.control<number | null>(null, [
-      Validators.required,
-      Validators.min(0),
-      Validators.max(1),
-    ]),
-    dureeEntrainement: this.fb.control<number | null>(null, [Validators.required, Validators.min(1)]),
-    dateExecution: this.fb.control<Date | null>(null, [Validators.required, dateNonFutureValidator]),
-  });
+  protected readonly formulaire = this.fb.nonNullable.group(
+    {
+      datasetId: this.fb.control<number | null>(null, Validators.required),
+      modeleId: this.fb.control<number | null>(null, Validators.required),
+      accuracy: this.fb.control<number | null>(null, [
+        Validators.required,
+        Validators.min(0),
+        Validators.max(1),
+      ]),
+      f1Score: this.fb.control<number | null>(null, [
+        Validators.required,
+        Validators.min(0),
+        Validators.max(1),
+      ]),
+      dureeHeures: this.fb.control<number | null>(0, [Validators.required, Validators.min(0)]),
+      dureeMinutes: this.fb.control<number | null>(0, [Validators.required, Validators.min(0), Validators.max(59)]),
+      dureeSecondes: this.fb.control<number | null>(0, [Validators.required, Validators.min(0), Validators.max(59)]),
+      dateExecution: this.fb.control<Date | null>(null, [Validators.required, dateNonFutureValidator]),
+    },
+    { validators: dureeStrictementPositiveValidator },
+  );
 
   constructor() {
     effect(() => {
@@ -87,7 +111,7 @@ export class ExperimentationFormulaire {
                   modeleId: donnees.modeleId,
                   accuracy: donnees.accuracy,
                   f1Score: donnees.f1Score,
-                  dureeEntrainement: donnees.dureeEntrainement,
+                  ...decomposerDureeEnSecondes(donnees.dureeEntrainement),
                   dateExecution: new Date(donnees.dateExecution),
                 }
               : {
@@ -95,7 +119,9 @@ export class ExperimentationFormulaire {
                   modeleId: null,
                   accuracy: null,
                   f1Score: null,
-                  dureeEntrainement: null,
+                  dureeHeures: 0,
+                  dureeMinutes: 0,
+                  dureeSecondes: 0,
                   dateExecution: null,
                 },
           );
@@ -121,7 +147,7 @@ export class ExperimentationFormulaire {
       modeleId: valeurs.modeleId,
       accuracy: valeurs.accuracy,
       f1Score: valeurs.f1Score,
-      dureeEntrainement: valeurs.dureeEntrainement,
+      dureeEntrainement: valeurs.dureeHeures! * 3600 + valeurs.dureeMinutes! * 60 + valeurs.dureeSecondes!,
       dateExecution: this.versIsoSansFuseau(valeurs.dateExecution!),
     };
 
@@ -140,7 +166,8 @@ export class ExperimentationFormulaire {
         const corps = e.error as ApiError | null;
         if (corps?.code === 'VALIDATION_ERROR' && corps.errors) {
           for (const erreurChamp of corps.errors) {
-            this.formulaire.get(erreurChamp.champ)?.setErrors({ serveur: erreurChamp.message });
+            const champCible = erreurChamp.champ === 'dureeEntrainement' ? 'dureeHeures' : erreurChamp.champ;
+            this.formulaire.get(champCible)?.setErrors({ serveur: erreurChamp.message });
           }
         }
       },

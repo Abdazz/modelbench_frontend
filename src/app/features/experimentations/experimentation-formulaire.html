@@ -59,10 +59,27 @@
     </div>
 
     <div class="flex flex-col gap-2">
-      <label for="dureeEntrainement" class="mb-eyebrow text-[0.68rem] text-[var(--p-text-muted-color)]">Durée d'entraînement (secondes)</label>
-      <p-inputnumber inputId="dureeEntrainement" formControlName="dureeEntrainement" [min]="1" />
-      @if (formulaire.get('dureeEntrainement')?.invalid && formulaire.get('dureeEntrainement')?.touched) {
-        <small class="text-red-500">La durée doit être strictement positive.</small>
+      <span class="mb-eyebrow text-[0.68rem] text-[var(--p-text-muted-color)]">Durée d'entraînement</span>
+      <div class="flex items-start gap-2">
+        <div class="flex flex-1 flex-col gap-1">
+          <label for="dureeHeures" class="text-[0.62rem] text-[var(--p-text-muted-color)]">Heures</label>
+          <p-inputnumber inputId="dureeHeures" formControlName="dureeHeures" [min]="0" styleClass="w-full" />
+        </div>
+        <div class="flex flex-1 flex-col gap-1">
+          <label for="dureeMinutes" class="text-[0.62rem] text-[var(--p-text-muted-color)]">Minutes</label>
+          <p-inputnumber inputId="dureeMinutes" formControlName="dureeMinutes" [min]="0" [max]="59" styleClass="w-full" />
+        </div>
+        <div class="flex flex-1 flex-col gap-1">
+          <label for="dureeSecondes" class="text-[0.62rem] text-[var(--p-text-muted-color)]">Secondes</label>
+          <p-inputnumber inputId="dureeSecondes" formControlName="dureeSecondes" [min]="0" [max]="59" styleClass="w-full" />
+        </div>
+      </div>
+      @if (formulaire.get('dureeHeures')?.touched || formulaire.get('dureeMinutes')?.touched || formulaire.get('dureeSecondes')?.touched) {
+        @if (formulaire.get('dureeHeures')?.invalid || formulaire.get('dureeMinutes')?.invalid || formulaire.get('dureeSecondes')?.invalid) {
+          <small class="text-red-500">Les minutes et les secondes doivent être comprises entre 0 et 59.</small>
+        } @else if (formulaire.errors?.['dureeNulle']) {
+          <small class="text-red-500">La durée doit être strictement positive.</small>
+        }
       }
     </div>
 

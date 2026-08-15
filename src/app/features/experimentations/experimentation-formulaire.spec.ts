@@ -51,10 +51,28 @@ describe('ExperimentationFormulaire', () => {
     expect(controle.invalid).toBe(true);
   });
 
-  it('dureeEntrainement nulle ou negative est invalide', () => {
+  it('duree totale nulle (heures, minutes et secondes a zero) est invalide', () => {
     const fixture = creer();
-    const controle = fixture.componentInstance['formulaire'].get('dureeEntrainement')!;
-    controle.setValue(0);
+    const formulaire = fixture.componentInstance['formulaire'];
+    formulaire.get('dureeHeures')?.setValue(0);
+    formulaire.get('dureeMinutes')?.setValue(0);
+    formulaire.get('dureeSecondes')?.setValue(0);
+    expect(formulaire.errors).toEqual({ dureeNulle: true });
+  });
+
+  it('duree totale strictement positive leve l erreur dureeNulle', () => {
+    const fixture = creer();
+    const formulaire = fixture.componentInstance['formulaire'];
+    formulaire.get('dureeHeures')?.setValue(0);
+    formulaire.get('dureeMinutes')?.setValue(0);
+    formulaire.get('dureeSecondes')?.setValue(1);
+    expect(formulaire.errors).toBeNull();
+  });
+
+  it('minutes ou secondes superieures a 59 est invalide', () => {
+    const fixture = creer();
+    const controle = fixture.componentInstance['formulaire'].get('dureeMinutes')!;
+    controle.setValue(60);
     expect(controle.invalid).toBe(true);
   });
 
@@ -80,7 +98,9 @@ describe('ExperimentationFormulaire', () => {
       modeleId: 1,
       accuracy: 0.98,
       f1Score: 0.97,
-      dureeEntrainement: 7245,
+      dureeHeures: 2,
+      dureeMinutes: 0,
+      dureeSecondes: 45,
       dateExecution: new Date('2026-05-01T10:30:00'),
     });
     expect(fixture.componentInstance['formulaire'].valid).toBe(true);
@@ -100,6 +120,25 @@ describe('ExperimentationFormulaire', () => {
     };
     const fixture = creer('edition', experimentation);
     expect(fixture.componentInstance['formulaire'].get('dateExecution')?.value).toBeInstanceOf(Date);
+  });
+
+  it('decompose dureeEntrainement en heures, minutes et secondes en mode edition', () => {
+    const experimentation: Experimentation = {
+      id: 1,
+      datasetId: 1,
+      datasetNom: 'MNIST',
+      modeleId: 1,
+      modeleNom: 'ResNet-50',
+      accuracy: 0.98,
+      f1Score: 0.97,
+      dureeEntrainement: 7245,
+      dateExecution: '2026-05-01T10:30:00',
+    };
+    const fixture = creer('edition', experimentation);
+    const formulaire = fixture.componentInstance['formulaire'];
+    expect(formulaire.get('dureeHeures')?.value).toBe(2);
+    expect(formulaire.get('dureeMinutes')?.value).toBe(0);
+    expect(formulaire.get('dureeSecondes')?.value).toBe(45);
   });
 
   it('changer le modele apres avoir choisi le dataset ne reinitialise pas le formulaire', () => {
@@ -127,7 +166,9 @@ describe('ExperimentationFormulaire', () => {
       modeleId: 1,
       accuracy: 0.98,
       f1Score: 0.97,
-      dureeEntrainement: 7245,
+      dureeHeures: 2,
+      dureeMinutes: 0,
+      dureeSecondes: 45,
       dateExecution: new Date(2026, 4, 1, 10, 30, 0),
     });
 
@@ -138,6 +179,26 @@ describe('ExperimentationFormulaire', () => {
     requete.flush({});
   });
 
+  it('convertit heures, minutes et secondes en un total de secondes a la soumission', () => {
+    const fixture = creer();
+    fixture.componentInstance['formulaire'].setValue({
+      datasetId: 1,
+      modeleId: 1,
+      accuracy: 0.98,
+      f1Score: 0.97,
+      dureeHeures: 2,
+      dureeMinutes: 0,
+      dureeSecondes: 45,
+      dateExecution: new Date(2026, 4, 1, 10, 30, 0),
+    });
+
+    fixture.componentInstance.soumettre();
+
+    const requete = httpMock.expectOne(`${environment.apiUrl}/experimentations`);
+    expect(requete.request.body.dureeEntrainement).toBe(7245);
+    requete.flush({});
+  });
+
   it('reinjecte les erreurs de validation du serveur sur les champs concernes', () => {
     const fixture = creer();
     fixture.componentInstance['formulaire'].setValue({
@@ -145,7 +206,9 @@ describe('ExperimentationFormulaire', () => {
       modeleId: 1,
       accuracy: 0.98,
       f1Score: 0.97,
-      dureeEntrainement: 7245,
+      dureeHeures: 2,
+      dureeMinutes: 0,
+      dureeSecondes: 45,
       dateExecution: new Date('2026-05-01T10:30:00'),
     });
 
@@ -165,6 +228,38 @@ describe('ExperimentationFormulaire', () => {
 
     expect(fixture.componentInstance['formulaire'].get('accuracy')?.errors).toEqual({
       serveur: 'Une experimentation identique existe deja',
+    });
+  });
+
+  it('reinjecte une erreur serveur sur dureeEntrainement vers le champ dureeHeures', () => {
+    const fixture = creer();
+    fixture.componentInstance['formulaire'].setValue({
+      datasetId: 1,
+      modeleId: 1,
+      accuracy: 0.98,
+      f1Score: 0.97,
+      dureeHeures: 2,
+      dureeMinutes: 0,
+      dureeSecondes: 45,
+      dateExecution: new Date('2026-05-01T10:30:00'),
+    });
+
+    fixture.componentInstance.soumettre();
+
+    httpMock.expectOne(`${environment.apiUrl}/experimentations`).flush(
+      {
+        timestamp: '2026-08-12T10:00:00Z',
+        status: 400,
+        code: 'VALIDATION_ERROR',
+        message: 'La validation a echoue',
+        path: '/api/experimentations',
+        errors: [{ champ: 'dureeEntrainement', message: 'La duree est invalide' }],
+      },
+      { status: 400, statusText: 'Bad Request' },
+    );
+
+    expect(fixture.componentInstance['formulaire'].get('dureeHeures')?.errors).toEqual({
+      serveur: 'La duree est invalide',
     });
   });
 });
