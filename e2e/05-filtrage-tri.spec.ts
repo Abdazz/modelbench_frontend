@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test('le filtre MNIST reduit le tableau et le tri recharge depuis l API', async ({ page }) => {
   await page.goto('/datasets');
-  await expect(page.getByRole('row')).toHaveCount(9); // 8 lignes de donnees + l entete
+  await expect(page.getByRole('row')).toHaveCount(11); // 10 lignes de donnees (page 1) + l entete
 
   await page.getByLabel('Recherche globale').fill('MNIST');
   await page.waitForTimeout(400);

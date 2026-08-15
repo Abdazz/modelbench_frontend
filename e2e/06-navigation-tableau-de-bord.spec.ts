@@ -16,6 +16,6 @@ test('navigation entre les quatre sections et indicateurs du tableau de bord', a
   await page.getByRole('link', { name: 'Tableau de bord' }).click();
   await expect(page).toHaveURL('/tableau-de-bord');
 
-  await expect(page.getByText('8', { exact: true }).first()).toBeVisible();
+  await expect(page.getByText('18', { exact: true }).first()).toBeVisible();
   await page.screenshot({ path: '../docs/captures/06-tableau-de-bord.png', fullPage: true });
 });
