@@ -61,17 +61,17 @@
     <div class="flex flex-col gap-2">
       <span class="mb-eyebrow text-[0.68rem] text-[var(--p-text-muted-color)]">Durée d'entraînement</span>
       <div class="flex items-start gap-2">
-        <div class="flex flex-1 flex-col gap-1">
+        <div class="flex min-w-0 flex-1 flex-col gap-1">
           <label for="dureeHeures" class="text-[0.62rem] text-[var(--p-text-muted-color)]">Heures</label>
-          <p-inputnumber inputId="dureeHeures" formControlName="dureeHeures" [min]="0" styleClass="w-full" />
+          <p-inputnumber inputId="dureeHeures" formControlName="dureeHeures" [min]="0" styleClass="w-full" [inputStyle]="{ width: '100%' }" />
         </div>
-        <div class="flex flex-1 flex-col gap-1">
+        <div class="flex min-w-0 flex-1 flex-col gap-1">
           <label for="dureeMinutes" class="text-[0.62rem] text-[var(--p-text-muted-color)]">Minutes</label>
-          <p-inputnumber inputId="dureeMinutes" formControlName="dureeMinutes" [min]="0" [max]="59" styleClass="w-full" />
+          <p-inputnumber inputId="dureeMinutes" formControlName="dureeMinutes" [min]="0" [max]="59" styleClass="w-full" [inputStyle]="{ width: '100%' }" />
         </div>
-        <div class="flex flex-1 flex-col gap-1">
+        <div class="flex min-w-0 flex-1 flex-col gap-1">
           <label for="dureeSecondes" class="text-[0.62rem] text-[var(--p-text-muted-color)]">Secondes</label>
-          <p-inputnumber inputId="dureeSecondes" formControlName="dureeSecondes" [min]="0" [max]="59" styleClass="w-full" />
+          <p-inputnumber inputId="dureeSecondes" formControlName="dureeSecondes" [min]="0" [max]="59" styleClass="w-full" [inputStyle]="{ width: '100%' }" />
         </div>
       </div>
       @if (formulaire.get('dureeHeures')?.touched || formulaire.get('dureeMinutes')?.touched || formulaire.get('dureeSecondes')?.touched) {
